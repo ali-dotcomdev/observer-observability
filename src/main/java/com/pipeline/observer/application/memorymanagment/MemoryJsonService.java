@@ -1,0 +1,28 @@
+package com.pipeline.observer.application.memorymanagment;
+
+import com.pipeline.observer.domain.ports.inbound.GetMemoryMetricsUseCase;
+import com.pipeline.observer.domain.ports.outbound.MetricPorts;
+import org.springframework.stereotype.Service;
+
+@Service
+public class MemoryJsonService implements GetMemoryMetricsUseCase {
+
+    private final MetricPorts metricPorts;
+
+    public MemoryJsonService(MetricPorts metricPorts){
+        this.metricPorts = metricPorts;
+    }
+
+    public MemoryRecord calculateRuntime(){
+
+        Runtime runtime = Runtime.getRuntime();
+
+        int processors = runtime.availableProcessors();
+
+        long totalMemoryMb = runtime.totalMemory() / (1024*1024);
+        long freeMemoryMb = runtime.freeMemory() / (1024*1024);
+
+        metricPorts.saveMetrics(processors, freeMemoryMb, totalMemoryMb);
+        return new MemoryRecord(processors, totalMemoryMb, freeMemoryMb);
+    }
+}
