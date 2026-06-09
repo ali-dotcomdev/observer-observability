@@ -2,16 +2,14 @@ package com.pipeline.observer.application.memorymanagment;
 
 import com.pipeline.observer.domain.ports.inbound.GetMemoryMetricsUseCase;
 import com.pipeline.observer.domain.ports.outbound.MetricPorts;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class MemoryJsonService implements GetMemoryMetricsUseCase {
 
     private final MetricPorts metricPorts;
-
-    public MemoryJsonService(MetricPorts metricPorts){
-        this.metricPorts = metricPorts;
-    }
 
     public MemoryRecord calculateRuntime(){
 
