@@ -17,15 +17,19 @@ public class DatabaseLogAppender extends UnsynchronizedAppenderBase<ILoggingEven
 
         if(ApplicationContextUtils.getContext() == null) return;
 
-        var repository = ApplicationContextUtils.getBean(ApplicationLogRepository.class);
+        try {
+            var repository = ApplicationContextUtils.getBean(ApplicationLogRepository.class);
 
-        ApplicationLogEntity logEntity = ApplicationLogEntity.builder()
-                .logLevel(eventObject.getLevel().toString())
-                .message(eventObject.getFormattedMessage())
-                .timestamp(Instant.ofEpochMilli(eventObject.getTimeStamp())
-                        .atZone(ZoneId.systemDefault())
-                        .toLocalDateTime())
-                .build();
-        repository.save(logEntity);
+            ApplicationLogEntity logEntity = ApplicationLogEntity.builder()
+                    .logLevel(eventObject.getLevel().toString())
+                    .message(eventObject.getFormattedMessage())
+                    .timestamp(Instant.ofEpochMilli(eventObject.getTimeStamp())
+                            .atZone(ZoneId.systemDefault())
+                            .toLocalDateTime())
+                    .build();
+            repository.save(logEntity);
+        }catch (Exception e){
+            System.err.println("Log DB'ye yazılamadı " + e.getMessage());
+        }
     }
 }

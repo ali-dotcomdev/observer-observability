@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Observer Pipeline Monitor</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                },
+            },
+        }
+    </script>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="bg-[#0b0f19] text-slate-100 min-h-screen flex flex-col items-center p-6 md:p-12 font-sans selection:bg-indigo-500/30">
+
+
+<header class="w-full max-w-6xl flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 pb-6 border-b border-slate-800/80 gap-4">
+    <div class="flex items-center gap-3">
+        <div class="p-2.5 bg-indigo-600/10 rounded-xl text-indigo-400 border border-indigo-500/15">
+            <i data-lucide="activity" class="w-6 h-6"></i>
+        </div>
+        <div>
+            <h1 class="text-xl font-bold tracking-tight text-white">Observer Pipeline</h1>
+            <p class="text-xs text-slate-400">Gerçek Zamanlı Sistem Gözlemlenebilirliği</p>
+        </div>
+    </div>
+    <div class="flex items-center gap-2 px-3.5 py-1.5 bg-emerald-500/10 text-emerald-400 rounded-full border border-emerald-500/20 text-xs font-semibold tracking-wide" id="status-badge">
+        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+        <span>SSE BAĞLANTISI AKTİF</span>
+    </div>
+</header>
+
+
+<main class="w-full max-w-6xl flex flex-col gap-6">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+
+        <div class="bg-slate-900/40 border border-slate-800/80 rounded-2xl p-6 flex items-center justify-between shadow-xl backdrop-blur-md">
+            <div>
+                <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider block">CPU Çekirdeği</span>
+                <span class="block text-3xl font-bold text-white mt-1.5" id="cpu-core">0</span>
+            </div>
+            <div class="p-3.5 bg-blue-500/10 text-blue-400 rounded-xl border border-blue-500/10">
+                <i data-lucide="cpu" class="w-6 h-6"></i>
+            </div>
+        </div>
+
+
+        <div class="bg-slate-900/40 border border-slate-800/80 rounded-2xl p-6 flex flex-col justify-between shadow-xl backdrop-blur-md">
+            <div class="flex items-center justify-between w-full">
+                <div>
+                    <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider block">Bellek Kullanım Oranı</span>
+                    <span class="block text-3xl font-bold text-white mt-1.5" id="ram-usage-percent">0%</span>
+                </div>
+                <div class="p-3.5 bg-indigo-500/10 text-indigo-400 rounded-xl border border-indigo-500/10">
+                    <i data-lucide="hard-drive" class="w-6 h-6"></i>
+                </div>
+            </div>
+            <div class="w-full bg-slate-800/50 h-2.5 rounded-full mt-4 overflow-hidden border border-slate-700/20">
+                <div id="ram-progress-bar" class="bg-gradient-to-r from-indigo-500 to-violet-500 h-full transition-all duration-500 rounded-full" style="width: 0%"></div>
+            </div>
+        </div>
+
+
+        <div class="bg-slate-900/40 border border-slate-800/80 rounded-2xl p-6 flex items-center justify-between shadow-xl backdrop-blur-md">
+            <div class="flex-1">
+                <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider block">Bellek Dağılımı</span>
+                <div class="grid grid-cols-3 gap-2 mt-3">
+                    <div class="bg-slate-800/30 p-2 rounded-lg border border-slate-800/50">
+                        <span class="text-[10px] uppercase font-bold text-indigo-400 block">Kullanılan</span>
+                        <span class="text-xs font-semibold text-white block mt-0.5" id="used-ram">0 MB</span>
+                    </div>
+                    <div class="bg-slate-800/30 p-2 rounded-lg border border-slate-800/50">
+                        <span class="text-[10px] uppercase font-bold text-emerald-400 block">Boş</span>
+                        <span class="text-xs font-semibold text-white block mt-0.5" id="free-ram">0 MB</span>
+                    </div>
+                    <div class="bg-slate-800/30 p-2 rounded-lg border border-slate-800/50">
+                        <span class="text-[10px] uppercase font-bold text-slate-400 block">Toplam</span>
+                        <span class="text-xs font-semibold text-white block mt-0.5" id="total-ram">0 MB</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+    <div class="w-full bg-slate-900/30 border border-slate-800/80 rounded-3xl p-6 shadow-2xl backdrop-blur-md">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-2">
+            <div>
+                <h3 class="text-lg font-semibold text-slate-100">Bellek Zaman Grafiği</h3>
+                <p class="text-xs text-slate-400">Sunucu üzerindeki anlık bellek değişimlerinin (MB) karşılaştırmalı analizi</p>
+            </div>
+            <div class="flex items-center gap-1.5 text-xs text-slate-400 bg-slate-800/50 px-3 py-1.5 rounded-lg border border-slate-700/30 font-medium">
+                <i data-lucide="clock" class="w-3.5 h-3.5"></i>
+                <span>2s Güncelleme Aralığı</span>
+            </div>
+        </div>
+        <div class="h-[380px] w-full relative">
+            <canvas id="ramChart"></canvas>
+        </div>
+    </div>
+</main>
+
+
+<footer class="mt-12 text-center text-xs text-slate-500">
+    <p>Observer &copy; 2026</p>
+</footer>
+
+<script>
+
+    lucide.createIcons();
+
+
+    const ctx = document.getElementById('ramChart').getContext('2d');
+
+
+    const gradientUsed = ctx.createLinearGradient(0, 0, 0, 350);
+    gradientUsed.addColorStop(0, 'rgba(99, 102, 241, 0.20)');
+    gradientUsed.addColorStop(1, 'rgba(99, 102, 241, 0)');
+
+
+    const gradientFree = ctx.createLinearGradient(0, 0, 0, 350);
+    gradientFree.addColorStop(0, 'rgba(16, 185, 129, 0.15)');
+    gradientFree.addColorStop(1, 'rgba(16, 185, 129, 0)');
+
+    const ramChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: [],
+            datasets: [
+                {
+                    label: 'Kullanılan Bellek (MB)',
+                    data: [],
+                    borderColor: '#6366f1',
+                    backgroundColor: gradientUsed,
+                    borderWidth: 2,
+                    tension: 0.4,
+                    fill: true,
+                    pointBackgroundColor: '#6366f1',
+                    pointBorderColor: '#0b0f19',
+                    pointBorderWidth: 2,
+                    pointRadius: 3,
+                    pointHoverRadius: 6,
+                },
+                {
+                    label: 'Boş Bellek (MB)',
+                    data: [],
+                    borderColor: '#10b981',
+                    backgroundColor: gradientFree,
+                    borderWidth: 2,
+                    tension: 0.4,
+                    fill: true,
+                    pointBackgroundColor: '#10b981',
+                    pointBorderColor: '#0b0f19',
+                    pointBorderWidth: 2,
+                    pointRadius: 3,
+                    pointHoverRadius: 6,
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            animation: {
+                duration: 350
+            },
+            scales: {
+                y: {
+                    beginAtZero: false,
+                    grid: {
+                        color: 'rgba(255, 255, 255, 0.04)'
+                    },
+                    ticks: {
+                        color: '#94a3b8',
+                        font: { family: 'Inter', size: 11 }
+                    }
+                },
+                x: {
+                    grid: {
+                        color: 'rgba(255, 255, 255, 0.04)'
+                    },
+                    ticks: {
+                        color: '#94a3b8',
+                        font: { family: 'Inter', size: 11 }
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    display: true,
+                    position: 'top',
+                    labels: {
+                        color: '#94a3b8',
+                        font: { family: 'Inter', size: 12 },
+                        padding: 15,
+                        usePointStyle: true,
+                        pointStyle: 'circle'
+                    }
+                },
+                tooltip: {
+                    backgroundColor: '#1e293b',
+                    titleColor: '#f8fafc',
+                    bodyColor: '#f8fafc',
+                    borderColor: 'rgba(255, 255, 255, 0.1)',
+                    borderWidth: 1,
+                    padding: 10,
+                    bodyFont: { family: 'Inter' },
+                    titleFont: { family: 'Inter', weight: 'bold' }
+                }
+            }
+        }
+    });
+
+
+    const eventSource = new EventSource('/stream/metrics');
+    const statusBadge = document.getElementById('status-badge');
+
+
+    eventSource.onopen = function() {
+        statusBadge.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span><span>SSE BAĞLANTISI AKTİF</span>`;
+        statusBadge.className = "flex items-center gap-2 px-3.5 py-1.5 bg-emerald-500/10 text-emerald-400 rounded-full border border-emerald-500/20 text-xs font-semibold tracking-wide";
+    };
+
+
+    eventSource.onmessage = function(event) {
+        const data = JSON.parse(event.data);
+
+
+        document.getElementById('cpu-core').innerText = data.processors;
+        document.getElementById('used-ram').innerText = data.usedMemoryMb + ' MB';
+        document.getElementById('free-ram').innerText = data.freeMemoryMb + ' MB';
+        document.getElementById('total-ram').innerText = data.totalMemoryMb + ' MB';
+
+
+        const usedRam = data.usedMemoryMb;
+        const usagePercent = data.totalMemoryMb > 0 ? ((usedRam / data.totalMemoryMb) * 100).toFixed(1) : 0;
+
+        document.getElementById('ram-usage-percent').innerText = usagePercent + "%";
+
+        const progressBar = document.getElementById('ram-progress-bar');
+        progressBar.style.width = usagePercent + "%";
+
+
+        if (usagePercent > 85) {
+            progressBar.className = "bg-gradient-to-r from-red-500 to-rose-500 h-full transition-all duration-500 rounded-full";
+        } else if (usagePercent > 65) {
+            progressBar.className = "bg-gradient-to-r from-amber-500 to-orange-500 h-full transition-all duration-500 rounded-full";
+        } else {
+            progressBar.className = "bg-gradient-to-r from-indigo-500 to-violet-500 h-full transition-all duration-500 rounded-full";
+        }
+
+
+        const now = new Date();
+        const timeString = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+
+        ramChart.data.labels.push(timeString);
+        ramChart.data.datasets[0].data.push(data.usedMemoryMb);
+        ramChart.data.datasets[1].data.push(data.freeMemoryMb);
+
+
+        if (ramChart.data.labels.length > 20) {
+            ramChart.data.labels.shift();
+            ramChart.data.datasets[0].data.shift();
+            ramChart.data.datasets[1].data.shift();
+        }
+
+        ramChart.update();
+    };
+
+
+    eventSource.onerror = function() {
+        statusBadge.innerHTML = `<span class="w-2 h-2 rounded-full bg-rose-500"></span><span>BAĞLANTI KESİLDİ</span>`;
+        statusBadge.className = "flex items-center gap-2 px-3.5 py-1.5 bg-rose-500/10 text-rose-400 rounded-full border border-rose-500/20 text-xs font-semibold tracking-wide";
+    };
+</script>
+</body>
+</html>

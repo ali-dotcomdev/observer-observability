@@ -15,12 +15,13 @@ public class PostgresMetricAdapter implements MetricPorts {
     private final SystemMetricRepository repository;
 
     @Override
-    public void saveMetrics(int processors, long freeMemoryMb, long totalMemoryMb) {
+    public void saveMetrics(int processors, long freeMemoryMb, long totalMemoryMb, long usedMemoryMb) {
 
         SystemMetricEntity entity = SystemMetricEntity.builder()
                 .processors(processors)
                 .freeMemoryMb(freeMemoryMb)
                 .totalMemoryMb(totalMemoryMb)
+                .usedMemoryMb(usedMemoryMb)
                 .timestamp(LocalDateTime.now())
                 .build();
         repository.save(entity);

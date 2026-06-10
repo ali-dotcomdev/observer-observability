@@ -21,5 +21,7 @@ public class SystemMetricEntity {
     private int processors;
     private long freeMemoryMb;
     private long totalMemoryMb;
+    @Column(name = "used_memory_mb")
+    private long usedMemoryMb;
     private LocalDateTime timestamp;
 }

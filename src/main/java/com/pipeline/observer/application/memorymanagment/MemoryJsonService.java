@@ -19,8 +19,9 @@ public class MemoryJsonService implements GetMemoryMetricsUseCase {
 
         long totalMemoryMb = runtime.totalMemory() / (1024*1024);
         long freeMemoryMb = runtime.freeMemory() / (1024*1024);
+        long usedMemoryMb = totalMemoryMb - freeMemoryMb;
 
-        metricPorts.saveMetrics(processors, freeMemoryMb, totalMemoryMb);
-        return new MemoryRecord(processors, totalMemoryMb, freeMemoryMb);
+        metricPorts.saveMetrics(processors, freeMemoryMb, totalMemoryMb, usedMemoryMb);
+        return new MemoryRecord(processors, totalMemoryMb, freeMemoryMb, usedMemoryMb);
     }
 }
