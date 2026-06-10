@@ -1,0 +1,25 @@
+package com.pipeline.observer.infrastructure.log.context;
+
+import lombok.Getter;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
+import org.springframework.stereotype.Component;
+
+@Component
+public class ApplicationContextUtils implements ApplicationContextAware {
+
+    private static ApplicationContext context;
+
+    public static ApplicationContext getContext() {
+        return context;
+    }
+
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext){
+        ApplicationContextUtils.context = applicationContext;
+    }
+
+    public static <T> T getBean(Class<T> beanClass){
+        return context.getBean(beanClass);
+    }
+}
