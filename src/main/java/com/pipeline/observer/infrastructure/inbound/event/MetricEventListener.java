@@ -2,6 +2,7 @@ package com.pipeline.observer.infrastructure.inbound.event;
 
 import com.pipeline.observer.application.memorymanagment.MemoryRecord;
 import com.pipeline.observer.application.memorymanagment.MetricCreatedEvent;
+import com.pipeline.observer.domain.ports.inbound.CheckAlertUseCase;
 import com.pipeline.observer.domain.ports.inbound.MetricEventPort;
 import com.pipeline.observer.domain.ports.inbound.SaveMetricUseCase;
 import com.pipeline.observer.domain.ports.inbound.StreamMetricUseCase;
@@ -16,6 +17,7 @@ public class MetricEventListener {
 
     private final SaveMetricUseCase saveMetricUseCase;
     private final StreamMetricUseCase streamMetricUseCase;
+    private final CheckAlertUseCase checkAlertUseCase;
 
     @EventListener
     @Async
@@ -26,5 +28,11 @@ public class MetricEventListener {
     @EventListener
     public void handleSseStreaming(MetricCreatedEvent event){
         streamMetricUseCase.streamMetrics(event.getMemoryRecord());
+    }
+
+    @EventListener
+    @Async
+    public void handleAlertChecking(MetricCreatedEvent event){
+        checkAlertUseCase.checkAlert(event.getMemoryRecord());
     }
 }

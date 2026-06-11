@@ -12,6 +12,7 @@ public class StreamMetricService implements StreamMetricUseCase{
 
     private final List<SseEmitter> emitters = new CopyOnWriteArrayList<>(); //for thread-safety
 
+    @Override
     public void streamMetrics(MemoryRecord record){
         for(SseEmitter emitter : emitters){
             try {
