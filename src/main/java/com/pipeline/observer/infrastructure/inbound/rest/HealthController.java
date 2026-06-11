@@ -1,8 +1,11 @@
 package com.pipeline.observer.infrastructure.inbound.rest;
 
 import com.pipeline.observer.application.memorymanagment.MemoryJsonService;
+import com.pipeline.observer.application.memorymanagment.MetricCreatedEvent;
+import com.pipeline.observer.application.memorymanagment.StreamMetricService;
 import com.pipeline.observer.domain.ports.inbound.GetMemoryMetricsUseCase;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -17,7 +20,8 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public class HealthController {
 
     private final GetMemoryMetricsUseCase getMemoryMetricsUseCase;
-    private final List<SseEmitter> emitters = new CopyOnWriteArrayList<>(); //for thread-safety
+    private final ApplicationEventPublisher eventPublisher;
+    private final StreamMetricService streamMetricService;
 
     @GetMapping("/health")
     public MemoryRecord getHealthStatus(){
@@ -27,11 +31,8 @@ public class HealthController {
     @GetMapping("/stream/metrics")
     public SseEmitter getEmitters(){
         SseEmitter emitter = new SseEmitter(-1L);
-        emitters.add(emitter);
 
-        emitter.onCompletion(() -> emitters.remove(emitter));
-        emitter.onTimeout(() -> emitters.remove(emitter));
-        emitter.onError((e) -> emitters.remove(emitter));
+        streamMetricService.addEmitter(emitter);
 
         return emitter;
     }
@@ -40,12 +41,7 @@ public class HealthController {
     public void publishMetrics(){
         var memoryRecord = getMemoryMetricsUseCase.calculateRuntime();
 
-        for (var e : emitters){
-            try {
-                e.send(memoryRecord);
-            } catch (Exception ex){
-                emitters.remove(ex);
-            }
-        }
+        MetricCreatedEvent event = new MetricCreatedEvent(this, memoryRecord);
+        eventPublisher.publishEvent(event);
     }
 }
