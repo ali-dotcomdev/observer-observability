@@ -1,5 +1,6 @@
-package com.pipeline.observer.application.memorymanagment;
+package com.pipeline.observer.application.memorymanagment.event;
 
+import com.pipeline.observer.domain.model.MemoryRecord;
 import lombok.Getter;
 import org.springframework.context.ApplicationEvent;
 

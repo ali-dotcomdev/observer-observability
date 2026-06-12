@@ -1,9 +1,7 @@
 package com.pipeline.observer.infrastructure.inbound.event;
 
-import com.pipeline.observer.application.memorymanagment.MemoryRecord;
-import com.pipeline.observer.application.memorymanagment.MetricCreatedEvent;
+import com.pipeline.observer.application.memorymanagment.event.MetricCreatedEvent;
 import com.pipeline.observer.domain.ports.inbound.CheckAlertUseCase;
-import com.pipeline.observer.domain.ports.inbound.MetricEventPort;
 import com.pipeline.observer.domain.ports.inbound.SaveMetricUseCase;
 import com.pipeline.observer.domain.ports.inbound.StreamMetricUseCase;
 import lombok.RequiredArgsConstructor;

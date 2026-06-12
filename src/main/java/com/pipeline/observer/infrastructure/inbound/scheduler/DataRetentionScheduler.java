@@ -1,4 +1,4 @@
-package com.pipeline.observer.application.memorymanagment;
+package com.pipeline.observer.infrastructure.inbound.scheduler;
 
 import com.pipeline.observer.domain.ports.outbound.LogRetentionPort;
 import com.pipeline.observer.domain.ports.outbound.RetentionLogPort;

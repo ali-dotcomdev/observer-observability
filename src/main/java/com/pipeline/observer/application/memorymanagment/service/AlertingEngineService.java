@@ -1,5 +1,6 @@
-package com.pipeline.observer.application.memorymanagment;
+package com.pipeline.observer.application.memorymanagment.service;
 
+import com.pipeline.observer.domain.model.MemoryRecord;
 import com.pipeline.observer.domain.ports.inbound.CheckAlertUseCase;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

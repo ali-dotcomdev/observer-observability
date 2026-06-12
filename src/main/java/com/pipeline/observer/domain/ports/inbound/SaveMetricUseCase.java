@@ -1,7 +1,6 @@
 package com.pipeline.observer.domain.ports.inbound;
 
-import com.pipeline.observer.application.memorymanagment.MemoryRecord;
-import com.pipeline.observer.application.memorymanagment.MetricCreatedEvent;
+import com.pipeline.observer.domain.model.MemoryRecord;
 
 public interface SaveMetricUseCase {
     void saveMetrics(MemoryRecord record);

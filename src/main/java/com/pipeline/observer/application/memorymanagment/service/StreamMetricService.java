@@ -1,5 +1,6 @@
-package com.pipeline.observer.application.memorymanagment;
+package com.pipeline.observer.application.memorymanagment.service;
 
+import com.pipeline.observer.domain.model.MemoryRecord;
 import com.pipeline.observer.domain.ports.inbound.StreamMetricUseCase;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
