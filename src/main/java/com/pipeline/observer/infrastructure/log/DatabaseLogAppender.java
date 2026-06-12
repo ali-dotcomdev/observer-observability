@@ -5,8 +5,6 @@ import ch.qos.logback.core.UnsynchronizedAppenderBase;
 import com.pipeline.observer.infrastructure.log.context.ApplicationContextUtils;
 import com.pipeline.observer.infrastructure.outbound.database.ApplicationLogEntity;
 import com.pipeline.observer.infrastructure.outbound.database.repository.ApplicationLogRepository;
-import lombok.Builder;
-
 import java.time.Instant;
 import java.time.ZoneId;
 

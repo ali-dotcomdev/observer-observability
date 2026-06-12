@@ -1,6 +1,7 @@
 package com.pipeline.observer.infrastructure.outbound.database.adapter;
 
 import com.pipeline.observer.domain.ports.outbound.MetricPorts;
+import com.pipeline.observer.domain.ports.outbound.RetentionLogPort;
 import com.pipeline.observer.infrastructure.outbound.database.SystemMetricEntity;
 import com.pipeline.observer.infrastructure.outbound.database.repository.SystemMetricRepository;
 import lombok.RequiredArgsConstructor;
@@ -10,7 +11,7 @@ import java.time.LocalDateTime;
 
 @Component
 @RequiredArgsConstructor
-public class PostgresMetricAdapter implements MetricPorts {
+public class PostgresMetricAdapter implements MetricPorts, RetentionLogPort {
 
     private final SystemMetricRepository repository;
 
@@ -25,5 +26,10 @@ public class PostgresMetricAdapter implements MetricPorts {
                 .timestamp(LocalDateTime.now())
                 .build();
         repository.save(entity);
+    }
+
+    @Override
+    public void deleteMetricsOlderThan(LocalDateTime cutoffDate){
+        repository.deleteByTimestampBefore(cutoffDate);
     }
 }
