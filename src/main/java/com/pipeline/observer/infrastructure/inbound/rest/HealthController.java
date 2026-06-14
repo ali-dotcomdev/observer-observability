@@ -1,7 +1,13 @@
 package com.pipeline.observer.infrastructure.inbound.rest;
 
-import com.pipeline.observer.application.memorymanagment.event.MetricCreatedEvent;
-import com.pipeline.observer.application.memorymanagment.service.StreamMetricService;
+import com.pipeline.observer.application.management.event.DiskMetricCreatedEvent;
+import com.pipeline.observer.application.management.event.FastMetricsCreatedEvent;
+import com.pipeline.observer.application.management.event.MetricCreatedEvent;
+import com.pipeline.observer.application.management.service.StreamMetricService;
+import com.pipeline.observer.domain.model.DiskRecord;
+import com.pipeline.observer.domain.model.FastMetricsPack;
+import com.pipeline.observer.domain.ports.inbound.DiskMetricUseCase;
+import com.pipeline.observer.domain.ports.inbound.FastMetricsUseCase;
 import com.pipeline.observer.domain.ports.inbound.GetMemoryMetricsUseCase;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
@@ -15,13 +21,14 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 @RequiredArgsConstructor
 public class HealthController {
 
-    private final GetMemoryMetricsUseCase getMemoryMetricsUseCase;
+    private final FastMetricsUseCase fastMetricsUseCase;
+    private final DiskMetricUseCase diskMetricUseCase;
     private final ApplicationEventPublisher eventPublisher;
     private final StreamMetricService streamMetricService;
 
     @GetMapping("/health")
     public MemoryRecord getHealthStatus(){
-        return getMemoryMetricsUseCase.calculateRuntime();
+        return fastMetricsUseCase.calculateFastMetrics().memoryRecord();
     }
 
     @GetMapping("/stream/metrics")
@@ -33,11 +40,19 @@ public class HealthController {
         return emitter;
     }
 
-    @Scheduled(fixedRate = 2000)
+    @Scheduled(fixedRate = 15000)
     public void publishMetrics(){
-        var memoryRecord = getMemoryMetricsUseCase.calculateRuntime();
+        FastMetricsPack fast = fastMetricsUseCase.calculateFastMetrics();
 
-        MetricCreatedEvent event = new MetricCreatedEvent(this, memoryRecord);
-        eventPublisher.publishEvent(event);
+        FastMetricsCreatedEvent fastEvent = new FastMetricsCreatedEvent(this, fast);
+        eventPublisher.publishEvent(fastEvent);
+    }
+
+    @Scheduled(fixedRate = 3600000)
+    public void publishDiskMetric(){
+        DiskRecord disk = diskMetricUseCase.calculateDiskRecord();
+
+        DiskMetricCreatedEvent diskEvent = new DiskMetricCreatedEvent(this, disk);
+        eventPublisher.publishEvent(diskEvent);
     }
 }

@@ -1,6 +1,9 @@
 package com.pipeline.observer.infrastructure.inbound.event;
 
-import com.pipeline.observer.application.memorymanagment.event.MetricCreatedEvent;
+import com.pipeline.observer.application.management.event.DiskMetricCreatedEvent;
+import com.pipeline.observer.application.management.event.FastMetricsCreatedEvent;
+import com.pipeline.observer.application.management.event.MetricCreatedEvent;
+import com.pipeline.observer.domain.model.FastMetricsPack;
 import com.pipeline.observer.domain.ports.inbound.CheckAlertUseCase;
 import com.pipeline.observer.domain.ports.inbound.SaveMetricUseCase;
 import com.pipeline.observer.domain.ports.inbound.StreamMetricUseCase;
@@ -19,18 +22,24 @@ public class MetricEventListener {
 
     @EventListener
     @Async
-    public void handleDatabaseSave(MetricCreatedEvent event){
-        saveMetricUseCase.saveMetrics(event.getMemoryRecord());
+    public void handleFastMetricsSave(FastMetricsCreatedEvent event){
+        saveMetricUseCase.saveFastMetrics(event.getFastMetricsPack());
     }
 
     @EventListener
-    public void handleSseStreaming(MetricCreatedEvent event){
-        streamMetricUseCase.streamMetrics(event.getMemoryRecord());
+    public void handleFastMetricsStream(FastMetricsCreatedEvent event){
+        streamMetricUseCase.streamMetrics(event.getFastMetricsPack());
     }
 
     @EventListener
     @Async
-    public void handleAlertChecking(MetricCreatedEvent event){
-        checkAlertUseCase.checkAlert(event.getMemoryRecord());
+    public void handleFastMetricsAlert(FastMetricsCreatedEvent event){
+        checkAlertUseCase.checkAlert(event.getFastMetricsPack());
+    }
+
+    @EventListener
+    @Async
+    public void handleDiskMetricSave(DiskMetricCreatedEvent event){
+        saveMetricUseCase.saveDiskMetric(event.getDiskRecord());
     }
 }
