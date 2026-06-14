@@ -6,19 +6,20 @@ import lombok.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "application_logs")
+@Table(name ="system_disk_metrics")
 @Getter
 @Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ApplicationLogEntity {
+public class SystemDiskEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String logLevel;
-    private String message;
+    private long totalSpaceGb;
+    private long usedSpaceGb;
+    private long freeSpaceGb;
     private LocalDateTime timestamp;
 }

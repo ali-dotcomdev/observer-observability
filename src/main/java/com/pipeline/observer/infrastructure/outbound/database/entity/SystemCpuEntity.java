@@ -6,19 +6,19 @@ import lombok.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "application_logs")
+@Table(name = "system_cpu_metrics")
 @Getter
 @Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ApplicationLogEntity {
+public class SystemCpuEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String logLevel;
-    private String message;
+    private double cpuLoad;
+    private long availableProcessors;
     private LocalDateTime timestamp;
 }
