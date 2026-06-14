@@ -1,6 +1,5 @@
-package com.pipeline.observer.application.memorymanagment.event;
+package com.pipeline.observer.application.management.event;
 
-import com.pipeline.observer.domain.model.MemoryRecord;
 import com.pipeline.observer.domain.model.SystemMetricSnapshot;
 import lombok.Getter;
 import org.springframework.context.ApplicationEvent;
