@@ -1,3 +1,3 @@
 package com.pipeline.observer.domain.model;
 
-public record MemoryRecord(int processors, long totalMemoryMb, long freeMemoryMb, long usedMemoryMb) { }
+public record MemoryRecord(long totalMemoryMb, long freeMemoryMb, long usedMemoryMb) { }

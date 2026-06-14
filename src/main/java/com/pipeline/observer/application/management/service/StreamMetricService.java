@@ -1,6 +1,7 @@
 package com.pipeline.observer.application.memorymanagment.service;
 
 import com.pipeline.observer.domain.model.MemoryRecord;
+import com.pipeline.observer.domain.model.SystemMetricSnapshot;
 import com.pipeline.observer.domain.ports.inbound.StreamMetricUseCase;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
@@ -14,12 +15,12 @@ public class StreamMetricService implements StreamMetricUseCase{
     private final List<SseEmitter> emitters = new CopyOnWriteArrayList<>(); //for thread-safety
 
     @Override
-    public void streamMetrics(MemoryRecord record){
+    public void streamMetrics(SystemMetricSnapshot systemMetricSnapshot){
         for(SseEmitter emitter : emitters){
             try {
-                emitter.send(record);
+                emitter.send(systemMetricSnapshot);
             }catch (Exception e){
-                emitters.remove(record);
+                emitters.remove(systemMetricSnapshot);
             }
         }
     }

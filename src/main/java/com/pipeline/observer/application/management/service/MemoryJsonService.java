@@ -1,28 +1,34 @@
 package com.pipeline.observer.application.memorymanagment.service;
 
+import com.pipeline.observer.domain.model.CpuRecord;
 import com.pipeline.observer.domain.model.MemoryRecord;
 import com.pipeline.observer.domain.ports.inbound.GetMemoryMetricsUseCase;
-import com.pipeline.observer.domain.ports.outbound.MetricPorts;
+import com.pipeline.observer.domain.ports.outbound.MetricPort;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.lang.management.ManagementFactory;
 
 @Service
 @RequiredArgsConstructor
 public class MemoryJsonService implements GetMemoryMetricsUseCase {
 
-    private final MetricPorts metricPorts;
+    private final MetricPort metricPort;
 
-    public MemoryRecord calculateRuntime(){
+    public MemoryRecord calculateMemoryRuntime(){
 
         Runtime runtime = Runtime.getRuntime();
 
-        int processors = runtime.availableProcessors();
 
         long totalMemoryMb = runtime.totalMemory() / (1024*1024);
         long freeMemoryMb = runtime.freeMemory() / (1024*1024);
         long usedMemoryMb = totalMemoryMb - freeMemoryMb;
 
-        metricPorts.saveMetrics(processors, freeMemoryMb, totalMemoryMb, usedMemoryMb);
-        return new MemoryRecord(processors, totalMemoryMb, freeMemoryMb, usedMemoryMb);
+        metricPort.saveSystemMetrics(freeMemoryMb, totalMemoryMb, usedMemoryMb);
+        return new MemoryRecord(totalMemoryMb, freeMemoryMb, usedMemoryMb);
+    }
+
+    public CpuRecord calculateCpuRuntime(){
+        ManagementFactory
     }
 }

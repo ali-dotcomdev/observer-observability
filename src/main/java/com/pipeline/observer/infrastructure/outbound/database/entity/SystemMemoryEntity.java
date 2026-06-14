@@ -1,4 +1,4 @@
-package com.pipeline.observer.infrastructure.outbound.database;
+package com.pipeline.observer.infrastructure.outbound.database.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -18,7 +18,6 @@ public class SystemMetricEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private int processors;
     private long freeMemoryMb;
     private long totalMemoryMb;
     @Column(name = "used_memory_mb")

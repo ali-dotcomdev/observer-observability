@@ -1,7 +1,7 @@
 package com.pipeline.observer.domain.ports.inbound;
 
-import com.pipeline.observer.domain.model.MemoryRecord;
+import com.pipeline.observer.domain.model.SystemMetricSnapshot;
 
 public interface GetMemoryMetricsUseCase {
-    MemoryRecord calculateRuntime();
+    SystemMetricSnapshot calculateSystemSnapshot();
 }
