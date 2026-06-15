@@ -19,13 +19,10 @@
     </script>
 
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
     <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 <body class="bg-[#0b0f19] text-slate-100 min-h-screen flex flex-col items-center p-6 md:p-12 font-sans selection:bg-indigo-500/30">
-
 
 <header class="w-full max-w-6xl flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 pb-6 border-b border-slate-800/80 gap-4">
     <div class="flex items-center gap-3">
@@ -43,249 +40,474 @@
     </div>
 </header>
 
-
 <main class="w-full max-w-6xl flex flex-col gap-6">
+
+    <!-- ÜÇLÜ METRİK KARTLARI -->
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
 
-
-        <div class="bg-slate-900/40 border border-slate-800/80 rounded-2xl p-6 flex items-center justify-between shadow-xl backdrop-blur-md">
-            <div>
-                <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider block">CPU Çekirdeği</span>
-                <span class="block text-3xl font-bold text-white mt-1.5" id="cpu-core">0</span>
-            </div>
-            <div class="p-3.5 bg-blue-500/10 text-blue-400 rounded-xl border border-blue-500/10">
-                <i data-lucide="cpu" class="w-6 h-6"></i>
-            </div>
-        </div>
-
-
+        <!-- CPU KARTI -->
         <div class="bg-slate-900/40 border border-slate-800/80 rounded-2xl p-6 flex flex-col justify-between shadow-xl backdrop-blur-md">
             <div class="flex items-center justify-between w-full">
                 <div>
-                    <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider block">Bellek Kullanım Oranı</span>
+                    <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider block">CPU Yükü</span>
+                    <span class="block text-3xl font-bold text-white mt-1.5" id="cpu-load">0%</span>
+                </div>
+                <div class="p-3.5 bg-blue-500/10 text-blue-400 rounded-xl border border-blue-500/10">
+                    <i data-lucide="cpu" class="w-6 h-6"></i>
+                </div>
+            </div>
+            <div class="w-full bg-slate-800/50 h-2.5 rounded-full mt-4 overflow-hidden border border-slate-700/20">
+                <div id="cpu-progress-bar" class="bg-gradient-to-r from-blue-500 to-indigo-500 h-full transition-all duration-500 rounded-full" style="width: 0%"></div>
+            </div>
+            <div class="mt-3 flex justify-between text-xs text-slate-400">
+                <span>İşlemci / Çekirdek</span>
+                <span class="font-semibold text-white" id="cpu-cores">0 Çekirdek</span>
+            </div>
+        </div>
+
+        <!-- BELLEK (RAM) KARTI -->
+        <div class="bg-slate-900/40 border border-slate-800/80 rounded-2xl p-6 flex flex-col justify-between shadow-xl backdrop-blur-md">
+            <div class="flex items-center justify-between w-full">
+                <div>
+                    <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider block">Bellek Kullanımı</span>
                     <span class="block text-3xl font-bold text-white mt-1.5" id="ram-usage-percent">0%</span>
                 </div>
                 <div class="p-3.5 bg-indigo-500/10 text-indigo-400 rounded-xl border border-indigo-500/10">
-                    <i data-lucide="hard-drive" class="w-6 h-6"></i>
+                    <i data-lucide="database" class="w-6 h-6"></i>
                 </div>
             </div>
             <div class="w-full bg-slate-800/50 h-2.5 rounded-full mt-4 overflow-hidden border border-slate-700/20">
                 <div id="ram-progress-bar" class="bg-gradient-to-r from-indigo-500 to-violet-500 h-full transition-all duration-500 rounded-full" style="width: 0%"></div>
             </div>
+            <div class="mt-3 flex justify-between text-[11px] text-slate-400 gap-2">
+                <div>Kullanılan: <span class="font-semibold text-white" id="used-ram">0 MB</span></div>
+                <div>Boş: <span class="font-semibold text-white" id="free-ram">0 MB</span></div>
+                <div>Toplam: <span class="font-semibold text-white" id="total-ram">0 MB</span></div>
+            </div>
         </div>
 
-
-        <div class="bg-slate-900/40 border border-slate-800/80 rounded-2xl p-6 flex items-center justify-between shadow-xl backdrop-blur-md">
-            <div class="flex-1">
-                <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider block">Bellek Dağılımı</span>
-                <div class="grid grid-cols-3 gap-2 mt-3">
-                    <div class="bg-slate-800/30 p-2 rounded-lg border border-slate-800/50">
-                        <span class="text-[10px] uppercase font-bold text-indigo-400 block">Kullanılan</span>
-                        <span class="text-xs font-semibold text-white block mt-0.5" id="used-ram">0 MB</span>
-                    </div>
-                    <div class="bg-slate-800/30 p-2 rounded-lg border border-slate-800/50">
-                        <span class="text-[10px] uppercase font-bold text-emerald-400 block">Boş</span>
-                        <span class="text-xs font-semibold text-white block mt-0.5" id="free-ram">0 MB</span>
-                    </div>
-                    <div class="bg-slate-800/30 p-2 rounded-lg border border-slate-800/50">
-                        <span class="text-[10px] uppercase font-bold text-slate-400 block">Toplam</span>
-                        <span class="text-xs font-semibold text-white block mt-0.5" id="total-ram">0 MB</span>
-                    </div>
+        <!-- DİSK KARTI -->
+        <div class="bg-slate-900/40 border border-slate-800/80 rounded-2xl p-6 flex flex-col justify-between shadow-xl backdrop-blur-md">
+            <div class="flex items-center justify-between w-full">
+                <div>
+                    <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider block">Disk Doluluğu</span>
+                    <span class="block text-3xl font-bold text-white mt-1.5" id="disk-usage-percent">0%</span>
                 </div>
+                <div class="p-3.5 bg-emerald-500/10 text-emerald-400 rounded-xl border border-emerald-500/10">
+                    <i data-lucide="hard-drive" class="w-6 h-6"></i>
+                </div>
+            </div>
+            <div class="w-full bg-slate-800/50 h-2.5 rounded-full mt-4 overflow-hidden border border-slate-700/20">
+                <div id="disk-progress-bar" class="bg-gradient-to-r from-emerald-500 to-teal-500 h-full transition-all duration-500 rounded-full" style="width: 0%"></div>
+            </div>
+            <div class="mt-3 flex justify-between text-[11px] text-slate-400 gap-2">
+                <div>Kullanılan: <span class="font-semibold text-white" id="used-disk">0 GB</span></div>
+                <div>Boş: <span class="font-semibold text-white" id="free-disk">0 GB</span></div>
+                <div>Toplam: <span class="font-semibold text-white" id="total-disk">0 GB</span></div>
             </div>
         </div>
 
     </div>
 
+    <!-- GRAFİKLER BÖLÜMÜ -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
-    <div class="w-full bg-slate-900/30 border border-slate-800/80 rounded-3xl p-6 shadow-2xl backdrop-blur-md">
-        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-2">
-            <div>
-                <h3 class="text-lg font-semibold text-slate-100">Bellek Zaman Grafiği</h3>
-                <p class="text-xs text-slate-400">Sunucu üzerindeki anlık bellek değişimlerinin (MB) karşılaştırmalı analizi</p>
+        <!-- CPU & RAM Zaman Serisi -->
+        <div class="lg:col-span-2 bg-slate-900/30 border border-slate-800/80 rounded-3xl p-6 shadow-2xl backdrop-blur-md">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-2">
+                <div>
+                    <h3 class="text-lg font-semibold text-slate-100">Performans Analizi</h3>
+                    <p class="text-xs text-slate-400">CPU ve RAM kullanımı zaman serisi (%) karşılaştırması</p>
+                </div>
+                <div class="flex items-center gap-1.5 text-xs text-slate-400 bg-slate-800/50 px-3 py-1.5 rounded-lg border border-slate-700/30 font-medium">
+                    <i data-lucide="clock" class="w-3.5 h-3.5"></i>
+                    <span>Dinamik Güncelleme</span>
+                </div>
             </div>
-            <div class="flex items-center gap-1.5 text-xs text-slate-400 bg-slate-800/50 px-3 py-1.5 rounded-lg border border-slate-700/30 font-medium">
-                <i data-lucide="clock" class="w-3.5 h-3.5"></i>
-                <span>2s Güncelleme Aralığı</span>
+            <div class="h-[300px] w-full relative">
+                <canvas id="performanceChart"></canvas>
             </div>
         </div>
-        <div class="h-[380px] w-full relative">
-            <canvas id="ramChart"></canvas>
+
+        <!-- Disk Dağılım Grafiği -->
+        <div class="bg-slate-900/30 border border-slate-800/80 rounded-3xl p-6 shadow-2xl backdrop-blur-md flex flex-col justify-between">
+            <div>
+                <h3 class="text-lg font-semibold text-slate-100">Disk Dağılımı</h3>
+                <p class="text-xs text-slate-400">Mevcut depolama alanı kullanımı</p>
+            </div>
+            <div class="h-[220px] w-full relative my-4 flex items-center justify-center">
+                <canvas id="diskDoughnutChart"></canvas>
+            </div>
+            <div class="text-center text-xs text-slate-400 border-t border-slate-800/50 pt-3">
+                Toplam Kapasite: <span class="font-semibold text-white animate-pulse" id="disk-total-text">0 GB</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- SİSTEM GÜNLÜKLERİ (CANLI LOG TERMINALİ) -->
+    <div class="w-full bg-slate-950/70 border border-slate-800/80 rounded-3xl p-6 shadow-2xl backdrop-blur-md">
+        <div class="flex items-center justify-between mb-4 border-b border-slate-800/80 pb-4">
+            <div class="flex items-center gap-2">
+                <div class="p-1.5 bg-indigo-500/10 text-indigo-400 rounded-lg">
+                    <i data-lucide="terminal" class="w-4 h-4"></i>
+                </div>
+                <div>
+                    <h3 class="text-sm font-semibold text-slate-100">Canlı Sistem Günlükleri (Log)</h3>
+                    <p class="text-[11px] text-slate-500">Pipeline üzerinden akan canlı log olayları</p>
+                </div>
+            </div>
+            <button onclick="clearLogs()" class="text-[11px] font-medium text-slate-400 hover:text-white px-2.5 py-1 bg-slate-800/50 hover:bg-slate-800 rounded-md border border-slate-700/30 transition-all">
+                Temizle
+            </button>
+        </div>
+        <!-- Terminal Alanı -->
+        <div id="log-terminal" class="h-48 overflow-y-auto font-mono text-xs p-4 bg-[#050811] rounded-2xl border border-slate-800/50 flex flex-col gap-2 scrollbar-thin scrollbar-thumb-slate-800">
+            <div class="text-slate-500 italic">Sistem başlatıldı, log akışı bekleniyor...</div>
         </div>
     </div>
 </main>
 
-
-<footer class="mt-12 text-center text-xs text-slate-500">
+<footer class="mt-12 text-center text-xs text-slate-500 pb-12">
     <p>Observer &copy; 2026</p>
 </footer>
 
 <script>
-
     lucide.createIcons();
 
+    // Son bilinen anlık durum değerleri (Grafikleri beslemek için saklanır)
+    let latestCpuVal = 0;
+    let latestRamVal = 0;
 
-    const ctx = document.getElementById('ramChart').getContext('2d');
+    // Line Chart (CPU & RAM Trend) Hazırlığı
+    const perfCtx = document.getElementById('performanceChart').getContext('2d');
 
+    const cpuGradient = perfCtx.createLinearGradient(0, 0, 0, 300);
+    cpuGradient.addColorStop(0, 'rgba(59, 130, 246, 0.2)');
+    cpuGradient.addColorStop(1, 'rgba(59, 130, 246, 0)');
 
-    const gradientUsed = ctx.createLinearGradient(0, 0, 0, 350);
-    gradientUsed.addColorStop(0, 'rgba(99, 102, 241, 0.20)');
-    gradientUsed.addColorStop(1, 'rgba(99, 102, 241, 0)');
+    const ramGradient = perfCtx.createLinearGradient(0, 0, 0, 300);
+    ramGradient.addColorStop(0, 'rgba(99, 102, 241, 0.2)');
+    ramGradient.addColorStop(1, 'rgba(99, 102, 241, 0)');
 
-
-    const gradientFree = ctx.createLinearGradient(0, 0, 0, 350);
-    gradientFree.addColorStop(0, 'rgba(16, 185, 129, 0.15)');
-    gradientFree.addColorStop(1, 'rgba(16, 185, 129, 0)');
-
-    const ramChart = new Chart(ctx, {
+    const performanceChart = new Chart(perfCtx, {
         type: 'line',
         data: {
             labels: [],
             datasets: [
                 {
-                    label: 'Kullanılan Bellek (MB)',
+                    label: 'CPU Yükü (%)',
+                    data: [],
+                    borderColor: '#3b82f6',
+                    backgroundColor: cpuGradient,
+                    borderWidth: 2,
+                    tension: 0.4,
+                    fill: true,
+                    pointBackgroundColor: '#3b82f6',
+                    pointBorderColor: '#0b0f19',
+                    pointBorderWidth: 1.5,
+                    pointRadius: 2,
+                },
+                {
+                    label: 'RAM Kullanımı (%)',
                     data: [],
                     borderColor: '#6366f1',
-                    backgroundColor: gradientUsed,
+                    backgroundColor: ramGradient,
                     borderWidth: 2,
                     tension: 0.4,
                     fill: true,
                     pointBackgroundColor: '#6366f1',
                     pointBorderColor: '#0b0f19',
-                    pointBorderWidth: 2,
-                    pointRadius: 3,
-                    pointHoverRadius: 6,
-                },
-                {
-                    label: 'Boş Bellek (MB)',
-                    data: [],
-                    borderColor: '#10b981',
-                    backgroundColor: gradientFree,
-                    borderWidth: 2,
-                    tension: 0.4,
-                    fill: true,
-                    pointBackgroundColor: '#10b981',
-                    pointBorderColor: '#0b0f19',
-                    pointBorderWidth: 2,
-                    pointRadius: 3,
-                    pointHoverRadius: 6,
+                    pointBorderWidth: 1.5,
+                    pointRadius: 2,
                 }
             ]
         },
         options: {
             responsive: true,
             maintainAspectRatio: false,
-            animation: {
-                duration: 350
-            },
+            animation: { duration: 250 },
             scales: {
                 y: {
-                    beginAtZero: false,
-                    grid: {
-                        color: 'rgba(255, 255, 255, 0.04)'
-                    },
-                    ticks: {
-                        color: '#94a3b8',
-                        font: { family: 'Inter', size: 11 }
-                    }
+                    min: 0,
+                    max: 100,
+                    grid: { color: 'rgba(255, 255, 255, 0.03)' },
+                    ticks: { color: '#94a3b8', font: { family: 'Inter', size: 10 } }
                 },
                 x: {
-                    grid: {
-                        color: 'rgba(255, 255, 255, 0.04)'
-                    },
-                    ticks: {
-                        color: '#94a3b8',
-                        font: { family: 'Inter', size: 11 }
-                    }
+                    grid: { color: 'rgba(255, 255, 255, 0.03)' },
+                    ticks: { color: '#94a3b8', font: { family: 'Inter', size: 10 } }
                 }
             },
             plugins: {
                 legend: {
                     display: true,
-                    position: 'top',
-                    labels: {
-                        color: '#94a3b8',
-                        font: { family: 'Inter', size: 12 },
-                        padding: 15,
-                        usePointStyle: true,
-                        pointStyle: 'circle'
-                    }
+                    labels: { color: '#94a3b8', font: { family: 'Inter', size: 11 }, usePointStyle: true, pointStyle: 'circle' }
                 },
                 tooltip: {
                     backgroundColor: '#1e293b',
                     titleColor: '#f8fafc',
                     bodyColor: '#f8fafc',
                     borderColor: 'rgba(255, 255, 255, 0.1)',
-                    borderWidth: 1,
-                    padding: 10,
-                    bodyFont: { family: 'Inter' },
-                    titleFont: { family: 'Inter', weight: 'bold' }
+                    borderWidth: 1
                 }
             }
         }
     });
 
+    // Doughnut Chart (Disk Durumu) Hazırlığı
+    const diskCtx = document.getElementById('diskDoughnutChart').getContext('2d');
+    const diskDoughnutChart = new Chart(diskCtx, {
+        type: 'doughnut',
+        data: {
+            labels: ['Kullanılan Alan (GB)', 'Boş Alan (GB)'],
+            datasets: [{
+                data: [0, 100],
+                backgroundColor: ['#10b981', '#1e293b'],
+                borderWidth: 2,
+                borderColor: '#0b0f19',
+                hoverOffset: 4
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            cutout: '75%',
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: { color: '#94a3b8', font: { family: 'Inter', size: 11 }, usePointStyle: true, pointStyle: 'circle' }
+                }
+            }
+        }
+    });
 
+    // JSON İÇERİSİNDE DERİNLİK FARK ETMEKSİZİN ÖZELLİK ARAYAN YARDIMCI ALGORİTMA
+    function findProperty(obj, keys) {
+        if (obj == null) return null;
+
+        // Önce nesnenin kendi anahtarlarında (kök dizinde) ara
+        for (let key of keys) {
+            if (obj.hasOwnProperty(key) && obj[key] !== undefined && obj[key] !== null) {
+                return obj[key];
+            }
+        }
+
+        // Eğer bulamazsa, nesnenin alt dallarına in (Recursive/Özyinelemeli arama)
+        for (let k in obj) {
+            if (obj[k] && typeof obj[k] === 'object') {
+                let found = findProperty(obj[k], keys);
+                if (found !== null) return found;
+            }
+        }
+        return null;
+    }
+
+    // SSE Bağlantısı
     const eventSource = new EventSource('/stream/metrics');
     const statusBadge = document.getElementById('status-badge');
-
+    const logTerminal = document.getElementById('log-terminal');
 
     eventSource.onopen = function() {
         statusBadge.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span><span>SSE BAĞLANTISI AKTİF</span>`;
         statusBadge.className = "flex items-center gap-2 px-3.5 py-1.5 bg-emerald-500/10 text-emerald-400 rounded-full border border-emerald-500/20 text-xs font-semibold tracking-wide";
     };
 
-
     eventSource.onmessage = function(event) {
-        const data = JSON.parse(event.data);
-
-
-        document.getElementById('cpu-core').innerText = data.processors;
-        document.getElementById('used-ram').innerText = data.usedMemoryMb + ' MB';
-        document.getElementById('free-ram').innerText = data.freeMemoryMb + ' MB';
-        document.getElementById('total-ram').innerText = data.totalMemoryMb + ' MB';
-
-
-        const usedRam = data.usedMemoryMb;
-        const usagePercent = data.totalMemoryMb > 0 ? ((usedRam / data.totalMemoryMb) * 100).toFixed(1) : 0;
-
-        document.getElementById('ram-usage-percent').innerText = usagePercent + "%";
-
-        const progressBar = document.getElementById('ram-progress-bar');
-        progressBar.style.width = usagePercent + "%";
-
-
-        if (usagePercent > 85) {
-            progressBar.className = "bg-gradient-to-r from-red-500 to-rose-500 h-full transition-all duration-500 rounded-full";
-        } else if (usagePercent > 65) {
-            progressBar.className = "bg-gradient-to-r from-amber-500 to-orange-500 h-full transition-all duration-500 rounded-full";
-        } else {
-            progressBar.className = "bg-gradient-to-r from-indigo-500 to-violet-500 h-full transition-all duration-500 rounded-full";
+        let data;
+        try {
+            data = JSON.parse(event.data);
+        } catch (e) {
+            console.error("Gelen SSE verisi JSON formatında ayrıştırılamadı: ", e);
+            return;
         }
 
+        // --- 1. CPU METRİKLERİ ---
+        const cpuLoad = findProperty(data, ['cpuLoad', 'cpu_load']);
+        const processors = findProperty(data, ['availableProcessors', 'available_processors', 'processors']);
 
-        const now = new Date();
-        const timeString = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        if (cpuLoad !== null) {
+            const numericCpu = parseFloat(cpuLoad);
+            latestCpuVal = numericCpu;
 
-        ramChart.data.labels.push(timeString);
-        ramChart.data.datasets[0].data.push(data.usedMemoryMb);
-        ramChart.data.datasets[1].data.push(data.freeMemoryMb);
+            document.getElementById('cpu-load').innerText = numericCpu.toFixed(1) + '%';
 
+            const cpuBar = document.getElementById('cpu-progress-bar');
+            cpuBar.style.width = numericCpu + '%';
 
-        if (ramChart.data.labels.length > 20) {
-            ramChart.data.labels.shift();
-            ramChart.data.datasets[0].data.shift();
-            ramChart.data.datasets[1].data.shift();
+            if (numericCpu > 85) {
+                cpuBar.className = "bg-gradient-to-r from-red-500 to-rose-500 h-full transition-all duration-500 rounded-full";
+            } else if (numericCpu > 65) {
+                cpuBar.className = "bg-gradient-to-r from-amber-500 to-orange-500 h-full transition-all duration-500 rounded-full";
+            } else {
+                cpuBar.className = "bg-gradient-to-r from-blue-500 to-indigo-500 h-full transition-all duration-500 rounded-full";
+            }
+        }
+        if (processors !== null) {
+            document.getElementById('cpu-cores').innerText = processors + ' Çekirdek';
         }
 
-        ramChart.update();
+        // --- 2. RAM (BELLEK) METRİKLERİ ---
+        const usedRam = findProperty(data, ['usedMemoryMb', 'used_memory_mb']);
+        const freeRam = findProperty(data, ['freeMemoryMb', 'free_memory_mb']);
+        const totalRam = findProperty(data, ['totalMemoryMb', 'total_memory_mb']);
+
+        if (usedRam !== null && totalRam !== null) {
+            const uRam = parseInt(usedRam);
+            const tRam = parseInt(totalRam);
+            const fRam = freeRam !== null ? parseInt(freeRam) : (tRam - uRam);
+
+            document.getElementById('used-ram').innerText = uRam + ' MB';
+            document.getElementById('free-ram').innerText = fRam + ' MB';
+            document.getElementById('total-ram').innerText = tRam + ' MB';
+
+            const ramPercent = tRam > 0 ? ((uRam / tRam) * 100) : 0;
+            latestRamVal = ramPercent;
+            document.getElementById('ram-usage-percent').innerText = ramPercent.toFixed(1) + "%";
+
+            const ramBar = document.getElementById('ram-progress-bar');
+            ramBar.style.width = ramPercent + "%";
+
+            if (ramPercent > 85) {
+                ramBar.className = "bg-gradient-to-r from-red-500 to-rose-500 h-full transition-all duration-500 rounded-full";
+            } else if (ramPercent > 65) {
+                ramBar.className = "bg-gradient-to-r from-amber-500 to-orange-500 h-full transition-all duration-500 rounded-full";
+            } else {
+                ramBar.className = "bg-gradient-to-r from-indigo-500 to-violet-500 h-full transition-all duration-500 rounded-full";
+            }
+        }
+
+        // --- 3. DİSK METRİKLERİ ---
+        const usedDisk = findProperty(data, ['usedSpaceGb', 'used_space_gb']);
+        const freeDisk = findProperty(data, ['freeSpaceGb', 'free_space_gb']);
+        const totalDisk = findProperty(data, ['totalSpaceGb', 'total_space_gb']);
+
+        if (usedDisk !== null && totalDisk !== null) {
+            const uDisk = parseInt(usedDisk);
+            const tDisk = parseInt(totalDisk);
+            const fDisk = freeDisk !== null ? parseInt(freeDisk) : (tDisk - uDisk);
+
+            document.getElementById('used-disk').innerText = uDisk + ' GB';
+            document.getElementById('free-disk').innerText = fDisk + ' GB';
+            document.getElementById('total-disk').innerText = tDisk + ' GB';
+            document.getElementById('disk-total-text').innerText = tDisk + ' GB';
+
+            const diskPercent = tDisk > 0 ? ((uDisk / tDisk) * 100) : 0;
+            document.getElementById('disk-usage-percent').innerText = diskPercent.toFixed(1) + "%";
+
+            const diskBar = document.getElementById('disk-progress-bar');
+            diskBar.style.width = diskPercent + "%";
+
+            if (diskPercent > 90) {
+                diskBar.className = "bg-gradient-to-r from-red-500 to-rose-500 h-full transition-all duration-500 rounded-full";
+            } else {
+                diskBar.className = "bg-gradient-to-r from-emerald-500 to-teal-500 h-full transition-all duration-500 rounded-full";
+            }
+
+            // Dairesel Disk Grafiğini Güncelle
+            diskDoughnutChart.data.datasets[0].data = [uDisk, fDisk];
+            diskDoughnutChart.data.datasets[0].backgroundColor = [
+                diskPercent > 85 ? '#f43f5e' : '#10b981',
+                '#1e293b'
+            ];
+            diskDoughnutChart.update();
+        }
+
+        // --- 4. PERFORMANS ÇİZGİ GRAFİĞİNİ GÜNCELLE ---
+        // Eğer CPU veya RAM verisi geldiyse grafiğe yeni bir zaman noktası ekle
+        if (cpuLoad !== null || usedRam !== null) {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+
+            performanceChart.data.labels.push(timeString);
+            performanceChart.data.datasets[0].data.push(latestCpuVal);
+            performanceChart.data.datasets[1].data.push(latestRamVal);
+
+            // Grafikte en fazla 20 veri noktası tut
+            if (performanceChart.data.labels.length > 20) {
+                performanceChart.data.labels.shift();
+                performanceChart.data.datasets[0].data.shift();
+                performanceChart.data.datasets[1].data.shift();
+            }
+            performanceChart.update();
+        }
+
+        // --- 5. CANLI LOGLAR ---
+        const logLevel = findProperty(data, ['logLevel', 'log_level']);
+        const logMessage = findProperty(data, ['message', 'logMessage', 'log_message']);
+
+        if (logLevel !== null && logMessage !== null) {
+            const logTimestamp = findProperty(data, ['timestamp', 'logTimestamp']) || new Date();
+            appendLog({
+                logLevel: logLevel,
+                message: logMessage,
+                timestamp: logTimestamp
+            });
+        }
     };
-
 
     eventSource.onerror = function() {
-        statusBadge.innerHTML = `<span class="w-2 h-2 rounded-full bg-rose-500"></span><span>BAĞLANTI KESİLDİ</span>`;
+        statusBadge.innerHTML = `<span class="w-2 h-2 rounded-full bg-rose-500 animate-pulse"></span><span>BAĞLANTI KESİLDİ</span>`;
         statusBadge.className = "flex items-center gap-2 px-3.5 py-1.5 bg-rose-500/10 text-rose-400 rounded-full border border-rose-500/20 text-xs font-semibold tracking-wide";
     };
+
+    // Terminale Log ekleme fonksiyonu
+    function appendLog(log) {
+        if (logTerminal.children.length === 1 && logTerminal.children[0].classList.contains('italic')) {
+            logTerminal.innerHTML = '';
+        }
+
+        const logRow = document.createElement('div');
+        logRow.className = "flex items-start gap-2 py-0.5 border-b border-slate-900/40 text-[11px] leading-relaxed animate-fade-in";
+
+        const timeSpan = document.createElement('span');
+        timeSpan.className = "text-slate-500 shrink-0 select-none";
+
+        let timeFormatted = "";
+        try {
+            timeFormatted = new Date(log.timestamp).toLocaleTimeString();
+        } catch(e) {
+            timeFormatted = new Date().toLocaleTimeString();
+        }
+        timeSpan.innerText = `[${timeFormatted}]`;
+
+        const levelSpan = document.createElement('span');
+        const level = (log.logLevel || 'INFO').toUpperCase();
+        levelSpan.innerText = level;
+
+        switch (level) {
+            case 'ERROR':
+            case 'FATAL':
+                levelSpan.className = "px-1.5 py-0.2 bg-red-500/15 text-red-400 border border-red-500/20 rounded text-[9px] font-bold tracking-wide shrink-0";
+                break;
+            case 'WARN':
+                levelSpan.className = "px-1.5 py-0.2 bg-amber-500/15 text-amber-400 border border-amber-500/20 rounded text-[9px] font-bold tracking-wide shrink-0";
+                break;
+            case 'DEBUG':
+                levelSpan.className = "px-1.5 py-0.2 bg-blue-500/15 text-blue-400 border border-blue-500/20 rounded text-[9px] font-bold tracking-wide shrink-0";
+                break;
+            default:
+                levelSpan.className = "px-1.5 py-0.2 bg-emerald-500/15 text-emerald-400 border border-emerald-500/20 rounded text-[9px] font-bold tracking-wide shrink-0";
+        }
+
+        const messageSpan = document.createElement('span');
+        messageSpan.className = "text-slate-300 break-all";
+        messageSpan.innerText = log.message;
+
+        logRow.appendChild(timeSpan);
+        logRow.appendChild(levelSpan);
+        logRow.appendChild(messageSpan);
+
+        logTerminal.appendChild(logRow);
+        logTerminal.scrollTop = logTerminal.scrollHeight;
+
+        if (logTerminal.children.length > 100) {
+            logTerminal.removeChild(logTerminal.firstChild);
+        }
+    }
+
+    function clearLogs() {
+        logTerminal.innerHTML = `<div class="text-slate-500 italic">Terminal temizlendi. Yeni loglar bekleniyor...</div>`;
+    }
 </script>
 </body>
 </html>

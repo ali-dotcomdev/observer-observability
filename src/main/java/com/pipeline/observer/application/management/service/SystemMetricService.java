@@ -1,16 +1,13 @@
 package com.pipeline.observer.application.management.service;
 
 import com.pipeline.observer.domain.model.*;
-import com.pipeline.observer.domain.ports.inbound.DiskMetricUseCase;
-import com.pipeline.observer.domain.ports.inbound.FastMetricsUseCase;
-import com.pipeline.observer.domain.ports.inbound.GetMemoryMetricsUseCase;
-import com.pipeline.observer.domain.ports.outbound.MetricPort;
+import com.pipeline.observer.domain.ports.inbound.usecase.DiskMetricUseCase;
+import com.pipeline.observer.domain.ports.inbound.usecase.FastMetricsUseCase;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.lang.management.ManagementFactory;
-import java.time.LocalDateTime;
 
 @Service
 @RequiredArgsConstructor
