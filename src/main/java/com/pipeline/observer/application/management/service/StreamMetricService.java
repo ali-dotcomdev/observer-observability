@@ -1,8 +1,8 @@
 package com.pipeline.observer.application.management.service;
 
+import com.pipeline.observer.domain.model.DiskRecord;
 import com.pipeline.observer.domain.model.FastMetricsPack;
-import com.pipeline.observer.domain.model.SystemMetricSnapshot;
-import com.pipeline.observer.domain.ports.inbound.StreamMetricUseCase;
+import com.pipeline.observer.domain.ports.inbound.usecase.StreamMetricUseCase;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
@@ -27,6 +27,17 @@ public class StreamMetricService implements StreamMetricUseCase{
         for(SseEmitter emitter : emitters){
             try {
                 emitter.send(fastMetricsPack);
+            }catch (Exception e){
+                emitters.remove(emitter);
+            }
+        }
+    }
+
+    @Override
+    public void streamDiskMetrics(DiskRecord diskRecord) {
+        for(SseEmitter emitter : emitters){
+            try {
+                emitter.send(diskRecord);
             }catch (Exception e){
                 emitters.remove(emitter);
             }

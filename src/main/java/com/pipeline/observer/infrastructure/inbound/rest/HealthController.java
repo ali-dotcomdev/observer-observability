@@ -2,19 +2,17 @@ package com.pipeline.observer.infrastructure.inbound.rest;
 
 import com.pipeline.observer.application.management.event.DiskMetricCreatedEvent;
 import com.pipeline.observer.application.management.event.FastMetricsCreatedEvent;
-import com.pipeline.observer.application.management.event.MetricCreatedEvent;
 import com.pipeline.observer.application.management.service.StreamMetricService;
 import com.pipeline.observer.domain.model.DiskRecord;
 import com.pipeline.observer.domain.model.FastMetricsPack;
-import com.pipeline.observer.domain.ports.inbound.DiskMetricUseCase;
-import com.pipeline.observer.domain.ports.inbound.FastMetricsUseCase;
-import com.pipeline.observer.domain.ports.inbound.GetMemoryMetricsUseCase;
+import com.pipeline.observer.domain.ports.inbound.usecase.DiskMetricUseCase;
+import com.pipeline.observer.domain.ports.inbound.usecase.FastMetricsUseCase;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
-import com.pipeline.observer.domain.model.MemoryRecord;
+import com.pipeline.observer.domain.model.RamRecord;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 @RestController
@@ -27,8 +25,8 @@ public class HealthController {
     private final StreamMetricService streamMetricService;
 
     @GetMapping("/health")
-    public MemoryRecord getHealthStatus(){
-        return fastMetricsUseCase.calculateFastMetrics().memoryRecord();
+    public RamRecord getHealthStatus(){
+        return fastMetricsUseCase.calculateFastMetrics().ramRecord();
     }
 
     @GetMapping("/stream/metrics")
@@ -48,7 +46,7 @@ public class HealthController {
         eventPublisher.publishEvent(fastEvent);
     }
 
-    @Scheduled(fixedRate = 3600000)
+    @Scheduled(fixedRate = 15000)
     public void publishDiskMetric(){
         DiskRecord disk = diskMetricUseCase.calculateDiskRecord();
 

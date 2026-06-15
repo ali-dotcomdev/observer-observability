@@ -1,9 +1,7 @@
-package com.pipeline.observer.domain.ports.inbound;
+package com.pipeline.observer.domain.ports.inbound.usecase;
 
 import com.pipeline.observer.domain.model.DiskRecord;
 import com.pipeline.observer.domain.model.FastMetricsPack;
-import com.pipeline.observer.domain.model.MemoryRecord;
-import com.pipeline.observer.domain.model.SystemMetricSnapshot;
 
 public interface SaveMetricUseCase {
     void saveFastMetrics(FastMetricsPack fastMetricsPack);

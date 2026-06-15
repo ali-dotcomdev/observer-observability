@@ -11,7 +11,7 @@ import java.lang.management.ManagementFactory;
 
 @Service
 @RequiredArgsConstructor
-public class MemoryJsonService implements FastMetricsUseCase, DiskMetricUseCase {
+public class SystemMetricService implements FastMetricsUseCase, DiskMetricUseCase {
 
     private CpuRecord measureCpu(){
         var cpuRecords = ManagementFactory.getPlatformMXBean(com.sun.management.OperatingSystemMXBean.class);
@@ -21,13 +21,13 @@ public class MemoryJsonService implements FastMetricsUseCase, DiskMetricUseCase 
         return new CpuRecord(cpuLoad, availableProcessors);
     }
 
-    private MemoryRecord measureMemory(){
+    private RamRecord measureMemory(){
         Runtime runtime = Runtime.getRuntime();
         long totalMemoryMb = runtime.totalMemory() / (1024*1024);
         long freeMemoryMb = runtime.freeMemory() / (1024*1024);
         long usedMemoryMb = totalMemoryMb - freeMemoryMb;
 
-        return new MemoryRecord(totalMemoryMb, freeMemoryMb, usedMemoryMb);
+        return new RamRecord(totalMemoryMb, freeMemoryMb, usedMemoryMb);
     }
 
     @Override
@@ -46,10 +46,10 @@ public class MemoryJsonService implements FastMetricsUseCase, DiskMetricUseCase 
     @Override
     public FastMetricsPack calculateFastMetrics() {
 
-        MemoryRecord memoryRecord = measureMemory();
+        RamRecord ramRecord = measureMemory();
         CpuRecord cpuRecord = measureCpu();
 
-        FastMetricsPack fastMetricsPack = new FastMetricsPack(memoryRecord, cpuRecord);
+        FastMetricsPack fastMetricsPack = new FastMetricsPack(ramRecord, cpuRecord);
 
         return fastMetricsPack;
     }

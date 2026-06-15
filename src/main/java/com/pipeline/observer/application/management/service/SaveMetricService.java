@@ -2,8 +2,7 @@ package com.pipeline.observer.application.management.service;
 
 import com.pipeline.observer.domain.model.DiskRecord;
 import com.pipeline.observer.domain.model.FastMetricsPack;
-import com.pipeline.observer.domain.model.SystemMetricSnapshot;
-import com.pipeline.observer.domain.ports.inbound.SaveMetricUseCase;
+import com.pipeline.observer.domain.ports.inbound.usecase.SaveMetricUseCase;
 import com.pipeline.observer.domain.ports.outbound.MetricPort;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -13,7 +12,6 @@ import org.springframework.stereotype.Service;
 public class SaveMetricService implements SaveMetricUseCase {
 
     private final MetricPort metricPort;
-
 
     @Override
     public void saveFastMetrics(FastMetricsPack fastMetricsPack) {

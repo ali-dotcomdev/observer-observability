@@ -6,13 +6,13 @@ import lombok.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "system_metrics")
+@Table(name = "system_ram_metrics")
 @Getter
 @Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class SystemMemoryEntity {
+public class SystemRamEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

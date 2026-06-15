@@ -2,12 +2,11 @@ package com.pipeline.observer.infrastructure.outbound.database.adapter;
 
 import com.pipeline.observer.domain.model.DiskRecord;
 import com.pipeline.observer.domain.model.FastMetricsPack;
-import com.pipeline.observer.domain.model.SystemMetricSnapshot;
 import com.pipeline.observer.domain.ports.outbound.MetricPort;
 import com.pipeline.observer.domain.ports.outbound.RetentionLogPort;
 import com.pipeline.observer.infrastructure.outbound.database.entity.SystemCpuEntity;
 import com.pipeline.observer.infrastructure.outbound.database.entity.SystemDiskEntity;
-import com.pipeline.observer.infrastructure.outbound.database.entity.SystemMemoryEntity;
+import com.pipeline.observer.infrastructure.outbound.database.entity.SystemRamEntity;
 import com.pipeline.observer.infrastructure.outbound.database.repository.SystemCpuRepository;
 import com.pipeline.observer.infrastructure.outbound.database.repository.SystemDiskRepository;
 import com.pipeline.observer.infrastructure.outbound.database.repository.SystemMemoryRepository;
@@ -36,10 +35,10 @@ public class PostgresMetricAdapter implements MetricPort, RetentionLogPort {
 
         LocalDateTime commonTimeStamp = LocalDateTime.now();
 
-        SystemMemoryEntity memoryEntity = SystemMemoryEntity.builder()
-                .freeMemoryMb(fastMetricsPack.memoryRecord().freeMemoryMb())
-                .totalMemoryMb(fastMetricsPack.memoryRecord().totalMemoryMb())
-                .usedMemoryMb(fastMetricsPack.memoryRecord().usedMemoryMb())
+        SystemRamEntity memoryEntity = SystemRamEntity.builder()
+                .freeMemoryMb(fastMetricsPack.ramRecord().freeMemoryMb())
+                .totalMemoryMb(fastMetricsPack.ramRecord().totalMemoryMb())
+                .usedMemoryMb(fastMetricsPack.ramRecord().usedMemoryMb())
                 .timestamp(commonTimeStamp)
                 .build();
         memoryRepository.save(memoryEntity);
