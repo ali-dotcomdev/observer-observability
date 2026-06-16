@@ -1,7 +1,7 @@
 package com.pipeline.observer.infrastructure.inbound.scheduler;
 
 import com.pipeline.observer.domain.ports.outbound.LogRetentionPort;
-import com.pipeline.observer.domain.ports.outbound.RetentionLogPort;
+import com.pipeline.observer.domain.ports.outbound.MetricRetentionPort;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -14,13 +14,13 @@ import java.time.LocalDateTime;
 @Slf4j
 public class DataRetentionScheduler {
 
-    private final RetentionLogPort retentionLogPort;
+    private final MetricRetentionPort metricRetentionPort;
     private final LogRetentionPort logRetentionPort;
 
     @Scheduled(cron = "0 0 3 * * ?")
     public void cleaner(){
         LocalDateTime metricCutoff = LocalDateTime.now().minusDays(2);
-        retentionLogPort.deleteMetricsOlderThan(metricCutoff);
+        metricRetentionPort.deleteMetricsOlderThan(metricCutoff);
         log.info("Metrics older than {} have been purged.", metricCutoff);
 
         LocalDateTime logCutoff = LocalDateTime.now().minusDays(7);

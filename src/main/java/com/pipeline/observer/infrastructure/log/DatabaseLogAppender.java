@@ -2,10 +2,15 @@ package com.pipeline.observer.infrastructure.log;
 
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.UnsynchronizedAppenderBase;
+import com.pipeline.observer.application.management.event.LogCreatedEvent;
+import com.pipeline.observer.infrastructure.inbound.rest.dto.LogDTO;
 import com.pipeline.observer.infrastructure.log.context.ApplicationContextUtils;
 import com.pipeline.observer.infrastructure.outbound.database.entity.ApplicationLogEntity;
 import com.pipeline.observer.infrastructure.outbound.database.repository.ApplicationLogRepository;
+import org.springframework.context.ApplicationEventPublisher;
+
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 
 public class DatabaseLogAppender extends UnsynchronizedAppenderBase<ILoggingEvent> {
@@ -16,8 +21,19 @@ public class DatabaseLogAppender extends UnsynchronizedAppenderBase<ILoggingEven
         if(ApplicationContextUtils.getContext() == null) return;
 
         try {
-            var repository = ApplicationContextUtils.getBean(ApplicationLogRepository.class);
+            var context = ApplicationContextUtils.getContext();
 
+            LogDTO logDto = LogDTO.builder()
+                    .logLevel(eventObject.getLevel().toString())
+                    .message(eventObject.getFormattedMessage())
+                    .timestamp(LocalDateTime.now())
+                    .build();
+
+            LogCreatedEvent logEvent = new LogCreatedEvent(this, logDto);
+
+            context.publishEvent(logEvent);
+
+            var repository = ApplicationContextUtils.getBean(ApplicationLogRepository.class);
             ApplicationLogEntity logEntity = ApplicationLogEntity.builder()
                     .logLevel(eventObject.getLevel().toString())
                     .message(eventObject.getFormattedMessage())
@@ -26,8 +42,9 @@ public class DatabaseLogAppender extends UnsynchronizedAppenderBase<ILoggingEven
                             .toLocalDateTime())
                     .build();
             repository.save(logEntity);
-        }catch (Exception e){
-            System.err.println("Log DB'ye yazılamadı " + e.getMessage());
+
+        } catch (Exception e) {
+            System.err.println("Log işlemleri sırasında hata: " + e.getMessage());
         }
     }
 }

@@ -3,7 +3,7 @@ package com.pipeline.observer.infrastructure.outbound.database.adapter;
 import com.pipeline.observer.domain.model.DiskRecord;
 import com.pipeline.observer.domain.model.FastMetricsPack;
 import com.pipeline.observer.domain.ports.outbound.MetricPort;
-import com.pipeline.observer.domain.ports.outbound.RetentionLogPort;
+import com.pipeline.observer.domain.ports.outbound.MetricRetentionPort;
 import com.pipeline.observer.infrastructure.outbound.database.entity.SystemCpuEntity;
 import com.pipeline.observer.infrastructure.outbound.database.entity.SystemDiskEntity;
 import com.pipeline.observer.infrastructure.outbound.database.entity.SystemRamEntity;
@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
 
 @Component
 @RequiredArgsConstructor
-public class PostgresMetricAdapter implements MetricPort, RetentionLogPort {
+public class PostgresMetricAdapter implements MetricPort, MetricRetentionPort {
 
     private final SystemMemoryRepository memoryRepository;
     private final SystemDiskRepository diskRepository;

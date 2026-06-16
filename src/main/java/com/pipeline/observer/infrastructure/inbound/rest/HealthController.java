@@ -2,6 +2,7 @@ package com.pipeline.observer.infrastructure.inbound.rest;
 
 import com.pipeline.observer.application.management.event.DiskMetricCreatedEvent;
 import com.pipeline.observer.application.management.event.FastMetricsCreatedEvent;
+import com.pipeline.observer.application.management.service.StreamLogService;
 import com.pipeline.observer.application.management.service.StreamMetricService;
 import com.pipeline.observer.domain.model.DiskRecord;
 import com.pipeline.observer.domain.model.FastMetricsPack;
@@ -23,10 +24,18 @@ public class HealthController {
     private final DiskMetricUseCase diskMetricUseCase;
     private final ApplicationEventPublisher eventPublisher;
     private final StreamMetricService streamMetricService;
+    private final StreamLogService streamLogService;
 
     @GetMapping("/health")
     public RamRecord getHealthStatus(){
         return fastMetricsUseCase.calculateFastMetrics().ramRecord();
+    }
+
+    @GetMapping("/stream/logs")
+    public SseEmitter streamLogs(){
+        SseEmitter emitter = new SseEmitter(-1L);
+        streamLogService.addEmitter(emitter);
+        return emitter;
     }
 
     @GetMapping("/stream/metrics")

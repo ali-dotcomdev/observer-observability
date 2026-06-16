@@ -2,7 +2,7 @@ package com.pipeline.observer.domain.ports.outbound;
 
 import java.time.LocalDateTime;
 
-public interface RetentionLogPort {
+public interface MetricRetentionPort {
 
     void deleteMetricsOlderThan(LocalDateTime cutoffDate);
 }

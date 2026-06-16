@@ -186,11 +186,28 @@ eventSource.onmessage = ({ data: raw }) => {
         }
         performanceChart.update();
     }
+};
 
-    // Log
-    if (log.logLevel != null && log.message != null) {
+// ── 5.2 LOG SSE BAĞLANTISI ───────────────────────────────────────────────────
+const logEventSource = new EventSource('/stream/logs');
+
+logEventSource.onmessage = ({ data: raw }) => {
+    let log;
+    try {
+        log = JSON.parse(raw);
+    } catch {
+        // Gelen veri JSON formatında değilse ham metin olarak yazdırmayı deneyebiliriz
+        appendLog('INFO', raw, new Date().toISOString());
+        return;
+    }
+
+    if (log && log.logLevel != null && log.message != null) {
         appendLog(log.logLevel, log.message, log.timestamp);
     }
+};
+
+logEventSource.onerror = () => {
+    console.warn("Log akışı bağlantısı kesildi, otomatik olarak yeniden bağlanmaya çalışılacak...");
 };
 
 // ── 6. LOG TERMİNALİ ─────────────────────────────────────────────────────────
