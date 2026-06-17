@@ -1,32 +1,22 @@
 package com.pipeline.observer.infrastructure.inbound.scheduler;
 
-import com.pipeline.observer.domain.ports.outbound.LogRetentionPort;
-import com.pipeline.observer.domain.ports.outbound.MetricRetentionPort;
+import com.pipeline.observer.domain.ports.inbound.usecase.DataRetentionUseCase;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class DataRetentionScheduler {
 
-    private final MetricRetentionPort metricRetentionPort;
-    private final LogRetentionPort logRetentionPort;
+    private final DataRetentionUseCase dataRetentionUseCase;
 
     @Scheduled(cron = "0 0 3 * * ?")
     public void cleaner(){
-        LocalDateTime metricCutoff = LocalDateTime.now().minusDays(2);
-        metricRetentionPort.deleteMetricsOlderThan(metricCutoff);
-        log.info("Metrics older than {} have been purged.", metricCutoff);
 
-        LocalDateTime logCutoff = LocalDateTime.now().minusDays(7);
-        logRetentionPort.deleteLogsOlderThan(logCutoff);
-        log.info("Application logs older than {} have been purged.", logCutoff);
-
-        log.info("Midnight database cleanup optimization completed successfully.");
+        dataRetentionUseCase.purgeHistoricalData();
     }
 }
