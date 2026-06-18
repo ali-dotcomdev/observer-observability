@@ -22,6 +22,7 @@ public class DatabaseMetricScheduler {
 
         DatabaseMetricRecord dbRecord = databaseMetricUseCase.calculateDatabaseMetrics();
         DatabaseMetricCreatedEvent databaseMetricCreatedEvent = new DatabaseMetricCreatedEvent(this, dbRecord);
+        applicationEventPublisher.publishEvent(databaseMetricCreatedEvent);
     }
 
 }
