@@ -14,6 +14,7 @@ public class StreamMetricService implements StreamMetricUseCase{
 
     private final List<SseEmitter> emitters = new CopyOnWriteArrayList<>(); //for thread-safety
 
+    @Override
     public void addEmitter(SseEmitter emitter){
         emitters.add(emitter);
 

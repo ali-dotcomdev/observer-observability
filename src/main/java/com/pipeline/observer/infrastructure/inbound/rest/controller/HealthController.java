@@ -4,12 +4,10 @@ import com.pipeline.observer.application.management.event.DiskMetricCreatedEvent
 import com.pipeline.observer.application.management.event.FastMetricsCreatedEvent;
 import com.pipeline.observer.application.management.service.StreamLogService;
 import com.pipeline.observer.application.management.service.StreamMetricService;
+import com.pipeline.observer.domain.model.DatabaseMetricRecord;
 import com.pipeline.observer.domain.model.DiskRecord;
 import com.pipeline.observer.domain.model.FastMetricsPack;
-import com.pipeline.observer.domain.ports.inbound.usecase.DiskMetricUseCase;
-import com.pipeline.observer.domain.ports.inbound.usecase.FastMetricsUseCase;
-import com.pipeline.observer.domain.ports.inbound.usecase.StreamLogUseCase;
-import com.pipeline.observer.domain.ports.inbound.usecase.StreamMetricUseCase;
+import com.pipeline.observer.domain.ports.inbound.usecase.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -27,6 +25,15 @@ public class HealthController {
     private final ApplicationEventPublisher eventPublisher;
     private final StreamMetricUseCase streamMetricUseCase;
     private final StreamLogUseCase streamLogUseCase;
+    private final StreamDatabaseMetricsUseCase streamDatabaseMetricsUseCase;
+    private final DatabaseMetricUseCase databaseMetricUseCase;
+
+    @GetMapping("/stream/databasemetrics")
+    public SseEmitter streamDatabaseMetrics(){
+        SseEmitter emitter = new SseEmitter(-1L);
+        streamDatabaseMetricsUseCase.addEmitter(emitter);
+        return emitter;
+    }
 
     @GetMapping("/health")
     public RamRecord getHealthStatus(){
