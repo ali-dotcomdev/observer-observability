@@ -1,4 +1,4 @@
-package com.pipeline.observer.infrastructure.inbound.rest;
+package com.pipeline.observer.infrastructure.inbound.rest.controller;
 
 import com.pipeline.observer.application.management.event.DiskMetricCreatedEvent;
 import com.pipeline.observer.application.management.event.FastMetricsCreatedEvent;
