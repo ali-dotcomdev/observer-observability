@@ -8,6 +8,8 @@ import com.pipeline.observer.domain.model.DiskRecord;
 import com.pipeline.observer.domain.model.FastMetricsPack;
 import com.pipeline.observer.domain.ports.inbound.usecase.DiskMetricUseCase;
 import com.pipeline.observer.domain.ports.inbound.usecase.FastMetricsUseCase;
+import com.pipeline.observer.domain.ports.inbound.usecase.StreamLogUseCase;
+import com.pipeline.observer.domain.ports.inbound.usecase.StreamMetricUseCase;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -23,8 +25,8 @@ public class HealthController {
     private final FastMetricsUseCase fastMetricsUseCase;
     private final DiskMetricUseCase diskMetricUseCase;
     private final ApplicationEventPublisher eventPublisher;
-    private final StreamMetricService streamMetricService;
-    private final StreamLogService streamLogService;
+    private final StreamMetricUseCase streamMetricUseCase;
+    private final StreamLogUseCase streamLogUseCase;
 
     @GetMapping("/health")
     public RamRecord getHealthStatus(){
@@ -34,7 +36,7 @@ public class HealthController {
     @GetMapping("/stream/logs")
     public SseEmitter streamLogs(){
         SseEmitter emitter = new SseEmitter(-1L);
-        streamLogService.addEmitter(emitter);
+        streamLogUseCase.addEmitter(emitter);
         return emitter;
     }
 
@@ -42,7 +44,7 @@ public class HealthController {
     public SseEmitter getEmitters(){
         SseEmitter emitter = new SseEmitter(-1L);
 
-        streamMetricService.addEmitter(emitter);
+        streamMetricUseCase.addEmitter(emitter);
 
         return emitter;
     }
