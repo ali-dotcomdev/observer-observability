@@ -1,9 +1,7 @@
-// ─── dashboard.js ────────────────────────────────────────────────────────────
 // Lucide ikonlarını başlat
 lucide.createIcons();
 
 // ── 1. DOM CACHE ─────────────────────────────────────────────────────────────
-// Her SSE mesajında getElementById çağırmak yerine referanslar bir kez alınır.
 const DOM = {
     statusBadge:    document.getElementById('status-badge'),
     // CPU
@@ -23,28 +21,42 @@ const DOM = {
     freeDisk:       document.getElementById('free-disk'),
     totalDisk:      document.getElementById('total-disk'),
     diskTotalText:  document.getElementById('disk-total-text'),
+    // Veritabanı
+    dbConnections:  document.getElementById('db-connections'),
+    dbBar:          document.getElementById('db-bar'),
+    dbSize:         document.getElementById('db-size'),
     // Log
     logTerminal:    document.getElementById('log-terminal'),
 };
 
 // ── 2. PROGRESS BAR HELPER ───────────────────────────────────────────────────
-// Üç farklı yerde tekrarlanan renk mantığı tek fonksiyona çekildi.
 const BAR_COLORS = {
     cpu:  { n: 'from-blue-500 to-indigo-500',   w: 'from-amber-500 to-orange-500', d: 'from-red-500 to-rose-500' },
     ram:  { n: 'from-indigo-500 to-violet-500', w: 'from-amber-500 to-orange-500', d: 'from-red-500 to-rose-500' },
     disk: { n: 'from-emerald-500 to-teal-500',  w: 'from-amber-500 to-orange-500', d: 'from-red-500 to-rose-500' },
+    db:   { n: 'from-cyan-500 to-blue-500',     w: 'from-amber-500 to-orange-500', d: 'from-red-500 to-rose-500' },
 };
 
 const BASE_BAR = 'bg-gradient-to-r h-full transition-all duration-500 rounded-full';
 
 function updateBar(el, pct, colors, warnAt = 65, dangerAt = 85) {
+    if (!el) return;
     el.style.width = pct + '%';
     const c = pct > dangerAt ? colors.d : pct > warnAt ? colors.w : colors.n;
     el.className = `${BASE_BAR} ${c}`;
 }
 
+// ── 2.2 BYTE FORMATTER ───────────────────────────────────────────────────────
+function formatBytes(bytes, decimals = 2) {
+    if (!bytes || isNaN(bytes) || bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const dm = decimals < 0 ? 0 : decimals;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+}
+
 // ── 3. LOG SEVİYE STİLLERİ ───────────────────────────────────────────────────
-// switch bloğu yerine O(1) nesne erişimi.
 const BASE_BADGE = 'px-1.5 py-0.2 rounded text-[9px] font-bold tracking-wide shrink-0 border';
 const LOG_STYLES = {
     ERROR: `${BASE_BADGE} bg-red-500/15    text-red-400    border-red-500/20`,
@@ -60,7 +72,6 @@ let latestCpu = 0, latestRam = 0;
 const perfCtx  = document.getElementById('performanceChart').getContext('2d');
 const diskCtx  = document.getElementById('diskDoughnutChart').getContext('2d');
 
-// Gradient yardımcısı
 function makeGradient(ctx, r, g, b) {
     const grad = ctx.createLinearGradient(0, 0, 0, 300);
     grad.addColorStop(0, `rgba(${r},${g},${b},0.2)`);
@@ -68,7 +79,6 @@ function makeGradient(ctx, r, g, b) {
     return grad;
 }
 
-// Dataset ortak seçenekleri
 const DS_BASE = {
     borderWidth: 2, tension: 0.4, fill: true,
     pointBorderColor: '#0b0f19', pointBorderWidth: 1.5, pointRadius: 2,
@@ -128,11 +138,9 @@ eventSource.onmessage = ({ data: raw }) => {
     let d;
     try { d = JSON.parse(raw); } catch { return; }
 
-    // Nested record'ları destructure et — eksikse boş obje düşer, null hatası olmaz
     const cpu  = d.cpuRecord  ?? {};
     const ram  = d.ramRecord  ?? {};
     const disk = d.diskRecord ?? {};
-    const log  = d.logRecord  ?? {};
 
     // CPU
     if (cpu.cpuLoad != null) {
@@ -196,7 +204,6 @@ logEventSource.onmessage = ({ data: raw }) => {
     try {
         log = JSON.parse(raw);
     } catch {
-        // Gelen veri JSON formatında değilse ham metin olarak yazdırmayı deneyebiliriz
         appendLog('INFO', raw, new Date().toISOString());
         return;
     }
@@ -210,9 +217,40 @@ logEventSource.onerror = () => {
     console.warn("Log akışı bağlantısı kesildi, otomatik olarak yeniden bağlanmaya çalışılacak...");
 };
 
+// ── 5.3 DATABASE SSE BAĞLANTISI ──────────────────────────────────────────────
+// Göreceli URL (relative path) kullanılarak olası port/CORS problemleri engellendi.
+const dbEventSource = new EventSource('/stream/databasemetrics');
+
+dbEventSource.onopen = () => {
+    console.log("🟢 VERİTABANI SSE BAĞLANTISI BAŞARIYLA AÇILDI!");
+};
+
+dbEventSource.onerror = (hata) => {
+    console.error("🔴 VERİTABANI SSE BAĞLANTI HATASI OLUŞTU:", hata);
+};
+
+dbEventSource.onmessage = ({ data: raw }) => {
+    handleDbData(raw);
+};
+dbEventSource.addEventListener('databasemetrics', ({ data: raw }) => {
+    handleDbData(raw);
+});
+
+function handleDbData(raw) {
+    let db;
+    try { db = JSON.parse(raw); } catch (e) { console.error("Parse hatası:", e); return; }
+
+    const connections = db.activeConnection ?? 0;
+    const sizeBytes   = db.dataBaseSizeBytes ?? 0;
+    const maxConns    = 100;
+
+    DOM.dbConnections.textContent = connections;
+    DOM.dbSize.textContent        = formatBytes(sizeBytes);
+    updateBar(DOM.dbBar, Math.min((connections / maxConns) * 100, 100), BAR_COLORS.db, 70, 90);
+}
+
 // ── 6. LOG TERMİNALİ ─────────────────────────────────────────────────────────
 function appendLog(level, message, timestamp) {
-    // Placeholder'ı ilk gerçek log gelince temizle
     if (DOM.logTerminal.children.length === 1 && DOM.logTerminal.children[0].classList.contains('italic')) {
         DOM.logTerminal.innerHTML = '';
     }
@@ -241,7 +279,6 @@ function appendLog(level, message, timestamp) {
     DOM.logTerminal.appendChild(row);
     DOM.logTerminal.scrollTop = DOM.logTerminal.scrollHeight;
 
-    // Maksimum 100 satır tut
     if (DOM.logTerminal.children.length > 100) {
         DOM.logTerminal.removeChild(DOM.logTerminal.firstChild);
     }
