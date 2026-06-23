@@ -1,7 +1,7 @@
-package com.pipeline.observer.application.management.service;
+package com.pipeline.observer.application.management.service.alert;
 
 import com.pipeline.observer.domain.model.FastMetricsPack;
-import com.pipeline.observer.domain.ports.inbound.usecase.CheckAlertUseCase;
+import com.pipeline.observer.domain.ports.inbound.usecase.alert.CheckAlertUseCase;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

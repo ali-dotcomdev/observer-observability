@@ -1,6 +1,6 @@
 package com.pipeline.observer.infrastructure.inbound.scheduler;
 
-import com.pipeline.observer.domain.ports.inbound.usecase.DataRetentionUseCase;
+import com.pipeline.observer.domain.ports.inbound.usecase.retention.DataRetentionUseCase;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;

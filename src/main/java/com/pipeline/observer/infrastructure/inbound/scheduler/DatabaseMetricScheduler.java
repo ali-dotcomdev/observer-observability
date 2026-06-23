@@ -2,7 +2,7 @@ package com.pipeline.observer.infrastructure.inbound.scheduler;
 
 import com.pipeline.observer.application.management.event.DatabaseMetricCreatedEvent;
 import com.pipeline.observer.domain.model.DatabaseMetricRecord;
-import com.pipeline.observer.domain.ports.inbound.usecase.DatabaseMetricUseCase;
+import com.pipeline.observer.domain.ports.inbound.usecase.database.DatabaseMetricUseCase;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.scheduling.annotation.Async;

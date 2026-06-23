@@ -2,7 +2,7 @@ package com.pipeline.observer.infrastructure.inbound.event;
 
 import com.pipeline.observer.application.management.event.DiskMetricCreatedEvent;
 import com.pipeline.observer.application.management.event.FastMetricsCreatedEvent;
-import com.pipeline.observer.domain.ports.inbound.usecase.CheckAlertUseCase;
+import com.pipeline.observer.domain.ports.inbound.usecase.alert.CheckAlertUseCase;
 import com.pipeline.observer.domain.ports.inbound.usecase.SaveMetricUseCase;
 import com.pipeline.observer.domain.ports.inbound.usecase.StreamMetricUseCase;
 import lombok.RequiredArgsConstructor;
@@ -35,10 +35,4 @@ public class MetricEventListener {
         checkAlertUseCase.checkAlert(event.getFastMetricsPack());
     }
 
-    @EventListener
-    @Async
-    public void handleDiskMetricSave(DiskMetricCreatedEvent event){
-        saveMetricUseCase.saveDiskMetric(event.getDiskRecord());
-        streamMetricUseCase.streamDiskMetrics(event.getDiskRecord());
-    }
 }

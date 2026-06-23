@@ -1,6 +1,6 @@
-package com.pipeline.observer.application.management.service;
+package com.pipeline.observer.application.management.service.retention;
 
-import com.pipeline.observer.domain.ports.inbound.usecase.DataRetentionUseCase;
+import com.pipeline.observer.domain.ports.inbound.usecase.retention.DataRetentionUseCase;
 import com.pipeline.observer.domain.ports.outbound.LogRetentionPort;
 import com.pipeline.observer.domain.ports.outbound.MetricRetentionPort;
 import lombok.RequiredArgsConstructor;

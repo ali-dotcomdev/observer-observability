@@ -1,8 +1,7 @@
 package com.pipeline.observer.infrastructure.inbound.event;
 
 import com.pipeline.observer.application.management.event.LogCreatedEvent;
-import com.pipeline.observer.domain.ports.inbound.usecase.StreamLogUseCase;
-import com.pipeline.observer.infrastructure.inbound.rest.dto.LogDTO;
+import com.pipeline.observer.domain.ports.inbound.usecase.log.StreamLogUseCase;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;

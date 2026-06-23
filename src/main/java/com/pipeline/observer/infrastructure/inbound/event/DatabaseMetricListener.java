@@ -1,8 +1,8 @@
 package com.pipeline.observer.infrastructure.inbound.event;
 
 import com.pipeline.observer.application.management.event.DatabaseMetricCreatedEvent;
-import com.pipeline.observer.domain.ports.inbound.usecase.SaveDatabaseMetricsUseCase;
-import com.pipeline.observer.domain.ports.inbound.usecase.StreamDatabaseMetricsUseCase;
+import com.pipeline.observer.domain.ports.inbound.usecase.database.SaveDatabaseMetricsUseCase;
+import com.pipeline.observer.domain.ports.inbound.usecase.database.StreamDatabaseMetricsUseCase;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;

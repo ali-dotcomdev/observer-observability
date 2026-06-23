@@ -1,8 +1,7 @@
-package com.pipeline.observer.application.management.service;
+package com.pipeline.observer.application.management.service.database;
 
-import com.pipeline.observer.application.management.event.DatabaseMetricCreatedEvent;
 import com.pipeline.observer.domain.model.DatabaseMetricRecord;
-import com.pipeline.observer.domain.ports.inbound.usecase.SaveDatabaseMetricsUseCase;
+import com.pipeline.observer.domain.ports.inbound.usecase.database.SaveDatabaseMetricsUseCase;
 import com.pipeline.observer.domain.ports.outbound.MetricPort;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

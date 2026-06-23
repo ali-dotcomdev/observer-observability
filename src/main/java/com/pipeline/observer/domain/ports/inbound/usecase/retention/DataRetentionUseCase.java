@@ -1,4 +1,4 @@
-package com.pipeline.observer.domain.ports.inbound.usecase;
+package com.pipeline.observer.domain.ports.inbound.usecase.retention;
 
 public interface DataRetentionUseCase {
 

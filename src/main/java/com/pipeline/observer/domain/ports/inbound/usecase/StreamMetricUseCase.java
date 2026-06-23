@@ -8,5 +8,4 @@ public interface StreamMetricUseCase {
 
     void addEmitter(SseEmitter emitter);
     void streamMetrics(FastMetricsPack fastMetricsPack);
-    void streamDiskMetrics(DiskRecord diskRecord);
 }
