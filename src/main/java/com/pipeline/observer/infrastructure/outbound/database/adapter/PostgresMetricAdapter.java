@@ -4,7 +4,7 @@ import com.pipeline.observer.domain.model.DatabaseMetricRecord;
 import com.pipeline.observer.domain.model.DiskRecord;
 import com.pipeline.observer.domain.model.FastMetricsPack;
 import com.pipeline.observer.domain.ports.outbound.MetricPort;
-import com.pipeline.observer.domain.ports.outbound.MetricRetentionPort;
+import com.pipeline.observer.domain.ports.outbound.retention.MetricRetentionPort;
 import com.pipeline.observer.infrastructure.outbound.database.entity.DatabaseMetricsEntity;
 import com.pipeline.observer.infrastructure.outbound.database.entity.SystemCpuEntity;
 import com.pipeline.observer.infrastructure.outbound.database.entity.SystemDiskEntity;

@@ -1,6 +1,6 @@
 package com.pipeline.observer.infrastructure.outbound.database.adapter;
 
-import com.pipeline.observer.domain.ports.outbound.DatabaseMonitorPort;
+import com.pipeline.observer.domain.ports.outbound.database.DatabaseMonitorPort;
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;

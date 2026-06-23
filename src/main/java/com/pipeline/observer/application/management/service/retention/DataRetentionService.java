@@ -1,8 +1,8 @@
 package com.pipeline.observer.application.management.service.retention;
 
 import com.pipeline.observer.domain.ports.inbound.usecase.retention.DataRetentionUseCase;
-import com.pipeline.observer.domain.ports.outbound.LogRetentionPort;
-import com.pipeline.observer.domain.ports.outbound.MetricRetentionPort;
+import com.pipeline.observer.domain.ports.outbound.retention.LogRetentionPort;
+import com.pipeline.observer.domain.ports.outbound.retention.MetricRetentionPort;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

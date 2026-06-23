@@ -1,4 +1,4 @@
-package com.pipeline.observer.domain.ports.outbound;
+package com.pipeline.observer.domain.ports.outbound.database;
 
 public interface DatabaseMonitorPort {
 

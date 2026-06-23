@@ -2,7 +2,7 @@ package com.pipeline.observer.application.management.service.database;
 
 import com.pipeline.observer.domain.model.DatabaseMetricRecord;
 import com.pipeline.observer.domain.ports.inbound.usecase.database.DatabaseMetricUseCase;
-import com.pipeline.observer.domain.ports.outbound.DatabaseMonitorPort;
+import com.pipeline.observer.domain.ports.outbound.database.DatabaseMonitorPort;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

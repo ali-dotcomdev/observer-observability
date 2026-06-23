@@ -1,7 +1,6 @@
 package com.pipeline.observer.application.management.service.cpu;
 
 import com.pipeline.observer.domain.model.CpuRecord;
-import com.pipeline.observer.domain.model.RamRecord;
 import com.pipeline.observer.domain.ports.inbound.usecase.cpu.StreamCpuUseCase;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;

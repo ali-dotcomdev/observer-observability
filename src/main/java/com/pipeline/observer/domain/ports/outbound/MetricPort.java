@@ -1,5 +1,6 @@
 package com.pipeline.observer.domain.ports.outbound;
 
+import com.pipeline.observer.domain.model.CpuRecord;
 import com.pipeline.observer.domain.model.DatabaseMetricRecord;
 import com.pipeline.observer.domain.model.DiskRecord;
 import com.pipeline.observer.domain.model.FastMetricsPack;
