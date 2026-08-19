@@ -22,7 +22,7 @@ public class StreamCpuService implements StreamCpuUseCase {
     }
 
     @Override
-    public void streamMetrics(CpuRecord record) {
+    public void streamCpuMetrics(CpuRecord record) {
         for(SseEmitter emitter : emitters){
             try {
                 emitter.send(record);
