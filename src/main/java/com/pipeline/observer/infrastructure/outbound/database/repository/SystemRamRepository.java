@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.Modifying;
 
 import java.time.LocalDateTime;
 
-public interface SystemMemoryRepository extends JpaRepository<SystemRamEntity, Long> {
+public interface SystemRamRepository extends JpaRepository<SystemRamEntity, Long> {
 
     @Transactional
     @Modifying
