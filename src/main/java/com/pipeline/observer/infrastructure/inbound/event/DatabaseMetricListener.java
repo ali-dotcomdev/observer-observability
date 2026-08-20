@@ -16,13 +16,13 @@ public class DatabaseMetricListener {
     private final SaveDatabaseMetricsUseCase saveDatabaseMetricsUseCase;
 
     @EventListener
-    public void handleDatabaseMetricsStream(DatabaseMetricCreatedEvent event){
+    public void streamDatabaseMetrics(DatabaseMetricCreatedEvent event){
         streamDatabaseMetricsUseCase.streamMetrics(event.getDatabaseMetricRecord());
     }
 
     @EventListener
     @Async
-    public void handleDatabaseMetricsSave(DatabaseMetricCreatedEvent event){
+    public void saveDatabaseMetrics(DatabaseMetricCreatedEvent event){
         saveDatabaseMetricsUseCase.saveDatabaseMetrics(event.getDatabaseMetricRecord());
     }
 }

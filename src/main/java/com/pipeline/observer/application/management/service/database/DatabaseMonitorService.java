@@ -12,9 +12,11 @@ public class DatabaseMonitorService implements DatabaseMetricUseCase {
 
     private final DatabaseMonitorPort databaseMonitorPort;
 
-    public DatabaseMetricRecord calculateDatabaseMetrics(){
+    @Override
+    public DatabaseMetricRecord measureDatabaseMetrics(){
 
-        DatabaseMetricRecord databaseMetricRecord = new DatabaseMetricRecord(databaseMonitorPort.fetchActiveConnections(), databaseMonitorPort.fetchDatabaseSizeBytes());
+        DatabaseMetricRecord databaseMetricRecord = new DatabaseMetricRecord(databaseMonitorPort.fetchActiveConnections(),
+                databaseMonitorPort.fetchDatabaseSizeBytes());
         return databaseMetricRecord;
     }
 }

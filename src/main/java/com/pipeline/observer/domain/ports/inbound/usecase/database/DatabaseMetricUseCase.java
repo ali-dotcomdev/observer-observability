@@ -4,5 +4,5 @@ import com.pipeline.observer.domain.model.DatabaseMetricRecord;
 
 public interface DatabaseMetricUseCase {
 
-    DatabaseMetricRecord calculateDatabaseMetrics();
+    DatabaseMetricRecord measureDatabaseMetrics();
 }
