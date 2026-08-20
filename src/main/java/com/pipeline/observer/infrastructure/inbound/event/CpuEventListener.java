@@ -8,7 +8,6 @@ import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
-@Async
 @Component
 @RequiredArgsConstructor
 public class CpuEventListener {
@@ -21,6 +20,7 @@ public class CpuEventListener {
         streamCpuUseCase.streamCpuMetrics(event.getCpuRecord());
     }
 
+    @Async
     @EventListener
     public void saveCpuMetrics(CpuMetricCreatedEvent event){
         saveCpu.saveCpuMetrics(event.getCpuRecord());

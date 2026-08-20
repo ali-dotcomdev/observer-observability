@@ -9,7 +9,6 @@ import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
-@Async
 @Component
 @RequiredArgsConstructor
 public class RamEventListener {
@@ -22,6 +21,7 @@ public class RamEventListener {
         streamRamUseCase.streamMetrics(event.getRamRecord());
     }
 
+    @Async
     @EventListener
     public void saveRamMetrics(RamMetricCreatedEvent event){
 
