@@ -2,7 +2,7 @@ package com.pipeline.observer.infrastructure.inbound.scheduler;
 
 import com.pipeline.observer.application.management.event.DiskMetricCreatedEvent;
 import com.pipeline.observer.domain.model.DiskRecord;
-import com.pipeline.observer.domain.ports.inbound.usecase.disk.DiskMetricUseCase;
+import com.pipeline.observer.domain.ports.inbound.usecase.disk.DiskMonitorUseCase;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
@@ -15,11 +15,11 @@ import org.springframework.stereotype.Service;
 public class DiskMetricScheduler {
 
     private final ApplicationEventPublisher eventPublisher;
-    private final DiskMetricUseCase diskMetricUseCase;
+    private final DiskMonitorUseCase diskMonitorUseCase;
 
     @Scheduled(fixedRate = 15000)
     public void publishDiskMetric(){
-        DiskRecord disk = diskMetricUseCase.calculateDiskRecord();
+        DiskRecord disk = diskMonitorUseCase.measureDiskMetric();
 
         DiskMetricCreatedEvent diskEvent = new DiskMetricCreatedEvent(this, disk);
         eventPublisher.publishEvent(diskEvent);

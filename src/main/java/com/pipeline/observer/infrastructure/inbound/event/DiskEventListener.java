@@ -17,12 +17,12 @@ public class DiskEventListener {
 
     @EventListener
     @Async
-    public void handleDiskMetricSave(DiskMetricCreatedEvent event){
+    public void saveDiskMetrics(DiskMetricCreatedEvent event){
         saveDiskMetric.saveDiskMetric(event.getDiskRecord());
     }
 
     @EventListener
-    public void handleDiskMetricStream(DiskMetricCreatedEvent event){
+    public void streamDiskMetrics(DiskMetricCreatedEvent event){
         streamDiskMetrics.streamDiskMetrics(event.getDiskRecord());
     }
 }

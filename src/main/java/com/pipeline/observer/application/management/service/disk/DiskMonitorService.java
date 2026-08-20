@@ -1,14 +1,15 @@
 package com.pipeline.observer.application.management.service.disk;
 
 import com.pipeline.observer.domain.model.DiskRecord;
+import com.pipeline.observer.domain.ports.inbound.usecase.disk.DiskMonitorUseCase;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
 
 @Service
-public class DiskMonitorService {
+public class DiskMonitorService implements DiskMonitorUseCase {
 
-    public DiskRecord measureDiskMetric() {
+    public DiskRecord measureDiskMetric(){
 
         File root = new File("/");
         long totalSpaceGb = root.getTotalSpace() / (1024*1024*1024);
