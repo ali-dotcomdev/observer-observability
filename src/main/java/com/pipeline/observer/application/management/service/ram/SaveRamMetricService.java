@@ -14,6 +14,6 @@ public class SaveRamMetricService implements SaveRamMetricUseCase {
 
     @Override
     public void saveRamMetrics(RamRecord ramRecord){
-
+        saveRamMetricPort.saveRamMetrics(ramRecord);
     }
 }
