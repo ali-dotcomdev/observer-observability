@@ -1,4 +1,4 @@
-package com.pipeline.observer.infrastructure.outbound.database.adapter;
+package com.pipeline.observer.infrastructure.outbound.database.adapter.database;
 
 import com.pipeline.observer.domain.ports.outbound.database.DatabaseMonitorPort;
 import lombok.RequiredArgsConstructor;

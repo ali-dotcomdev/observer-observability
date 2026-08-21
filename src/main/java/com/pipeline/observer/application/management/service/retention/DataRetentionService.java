@@ -7,19 +7,23 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class DataRetentionService implements DataRetentionUseCase {
 
-    private final MetricRetentionPort metricRetentionPort;
+    private final List<MetricRetentionPort> metricRetentionPorts;
     private final LogRetentionPort logRetentionPort;
 
     public void purgeHistoricalData(){
         LocalDateTime cutoffDateForLogs = LocalDateTime.now().minusDays(7);
         LocalDateTime cutoffDateForMetrics = LocalDateTime.now().minusDays(2);
 
-        metricRetentionPort.deleteMetricsOlderThan(cutoffDateForMetrics);
+        for(MetricRetentionPort port : metricRetentionPorts){
+            port.deleteMetricsOlderThan(cutoffDateForMetrics);
+        }
+
         logRetentionPort.deleteLogsOlderThan(cutoffDateForLogs);
     }
 }
