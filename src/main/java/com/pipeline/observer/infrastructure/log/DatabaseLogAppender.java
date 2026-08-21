@@ -30,18 +30,7 @@ public class DatabaseLogAppender extends UnsynchronizedAppenderBase<ILoggingEven
                     .build();
 
             LogCreatedEvent logEvent = new LogCreatedEvent(this, logDto);
-
             context.publishEvent(logEvent);
-
-            var repository = ApplicationContextUtils.getBean(ApplicationLogRepository.class);
-            ApplicationLogEntity logEntity = ApplicationLogEntity.builder()
-                    .logLevel(eventObject.getLevel().toString())
-                    .message(eventObject.getFormattedMessage())
-                    .timestamp(Instant.ofEpochMilli(eventObject.getTimeStamp())
-                            .atZone(ZoneId.systemDefault())
-                            .toLocalDateTime())
-                    .build();
-            repository.save(logEntity);
 
         } catch (Exception e) {
             System.err.println("Log işlemleri sırasında hata: " + e.getMessage());
