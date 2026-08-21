@@ -16,7 +16,7 @@ const DOM = {
     totalRam:       document.getElementById('total-ram'),
     // Disk
     diskPercent:    document.getElementById('disk-percent'),
-    diskBar:        document.getElementById('disk-bar'),
+    diskBar:         document.getElementById('disk-bar'),
     usedDisk:       document.getElementById('used-disk'),
     freeDisk:       document.getElementById('free-disk'),
     totalDisk:      document.getElementById('total-disk'),
@@ -121,28 +121,40 @@ const diskChart = new Chart(diskCtx, {
     },
 });
 
-// ── 5. SSE BAĞLANTISI ────────────────────────────────────────────────────────
-const eventSource = new EventSource('/stream/metrics');
+// ── 5. SSE BAĞLANTILARI (CPU, RAM, DİSK) ─────────────────────────────────────
+const connectionStates = { cpu: false, ram: false, disk: false };
 
-eventSource.onopen = () => {
-    DOM.statusBadge.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span><span>SSE BAĞLANTISI AKTİF</span>`;
-    DOM.statusBadge.className = 'flex items-center gap-2 px-3.5 py-1.5 bg-emerald-500/10 text-emerald-400 rounded-full border border-emerald-500/20 text-xs font-semibold tracking-wide';
+function updateStatusBadge() {
+    const allConnected = Object.values(connectionStates).every(Boolean);
+    if (allConnected) {
+        DOM.statusBadge.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span><span>SSE BAĞLANTISI AKTİF</span>`;
+        DOM.statusBadge.className = 'flex items-center gap-2 px-3.5 py-1.5 bg-emerald-500/10 text-emerald-400 rounded-full border border-emerald-500/20 text-xs font-semibold tracking-wide';
+    } else {
+        DOM.statusBadge.innerHTML = `<span class="w-2 h-2 rounded-full bg-rose-500 animate-pulse"></span><span>BAĞLANTI KESİNTİSİ VAR</span>`;
+        DOM.statusBadge.className = 'flex items-center gap-2 px-3.5 py-1.5 bg-rose-500/10 text-rose-400 rounded-full border border-rose-500/20 text-xs font-semibold tracking-wide';
+    }
+}
+
+// 5.1 CPU SSE BAĞLANTISI
+const cpuEventSource = new EventSource('/api/metrics/cpu/stream');
+
+cpuEventSource.onopen = () => {
+    connectionStates.cpu = true;
+    updateStatusBadge();
 };
 
-eventSource.onerror = () => {
-    DOM.statusBadge.innerHTML = `<span class="w-2 h-2 rounded-full bg-rose-500 animate-pulse"></span><span>BAĞLANTI KESİLDİ</span>`;
-    DOM.statusBadge.className = 'flex items-center gap-2 px-3.5 py-1.5 bg-rose-500/10 text-rose-400 rounded-full border border-rose-500/20 text-xs font-semibold tracking-wide';
+cpuEventSource.onerror = () => {
+    connectionStates.cpu = false;
+    updateStatusBadge();
 };
 
-eventSource.onmessage = ({ data: raw }) => {
+cpuEventSource.onmessage = ({ data: raw }) => {
     let d;
     try { d = JSON.parse(raw); } catch { return; }
 
-    const cpu  = d.cpuRecord  ?? {};
-    const ram  = d.ramRecord  ?? {};
-    const disk = d.diskRecord ?? {};
+    // Hem cpuRecord sarmalayıcısını hem de doğrudan alanları destekler
+    const cpu = d.cpuRecord ?? d;
 
-    // CPU
     if (cpu.cpuLoad != null) {
         latestCpu = parseFloat(cpu.cpuLoad);
         DOM.cpuLoad.textContent = latestCpu.toFixed(1) + '%';
@@ -151,8 +163,27 @@ eventSource.onmessage = ({ data: raw }) => {
     if (cpu.availableProcessors != null) {
         DOM.cpuCores.textContent = cpu.availableProcessors + ' Çekirdek';
     }
+};
 
-    // RAM
+// 5.2 RAM SSE BAĞLANTISI
+const ramEventSource = new EventSource('/api/metrics/ram/stream');
+
+ramEventSource.onopen = () => {
+    connectionStates.ram = true;
+    updateStatusBadge();
+};
+
+ramEventSource.onerror = () => {
+    connectionStates.ram = false;
+    updateStatusBadge();
+};
+
+ramEventSource.onmessage = ({ data: raw }) => {
+    let d;
+    try { d = JSON.parse(raw); } catch { return; }
+
+    const ram = d.ramRecord ?? d;
+
     if (ram.usedMemoryMb != null && ram.totalMemoryMb != null) {
         const used = +ram.usedMemoryMb, total = +ram.totalMemoryMb;
         const free = ram.freeMemoryMb != null ? +ram.freeMemoryMb : total - used;
@@ -164,8 +195,27 @@ eventSource.onmessage = ({ data: raw }) => {
         DOM.totalRam.textContent   = total + ' MB';
         updateBar(DOM.ramBar, pct, BAR_COLORS.ram);
     }
+};
 
-    // Disk
+// 5.3 DISK SSE BAĞLANTISI
+const diskEventSource = new EventSource('/api/metrics/disk/stream');
+
+diskEventSource.onopen = () => {
+    connectionStates.disk = true;
+    updateStatusBadge();
+};
+
+diskEventSource.onerror = () => {
+    connectionStates.disk = false;
+    updateStatusBadge();
+};
+
+diskEventSource.onmessage = ({ data: raw }) => {
+    let d;
+    try { d = JSON.parse(raw); } catch { return; }
+
+    const disk = d.diskRecord ?? d;
+
     if (disk.usedSpaceGb != null && disk.totalSpaceGb != null) {
         const used = +disk.usedSpaceGb, total = +disk.totalSpaceGb;
         const free = disk.freeSpaceGb != null ? +disk.freeSpaceGb : total - used;
@@ -176,27 +226,37 @@ eventSource.onmessage = ({ data: raw }) => {
         DOM.totalDisk.textContent    = total + ' GB';
         DOM.diskTotalText.textContent = total + ' GB';
         updateBar(DOM.diskBar, pct, BAR_COLORS.disk, 70, 90);
+
         diskChart.data.datasets[0].data            = [used, free];
         diskChart.data.datasets[0].backgroundColor = [pct > 85 ? '#f43f5e' : '#10b981', '#1e293b'];
         diskChart.update();
     }
-
-    // Zaman serisi grafiği
-    if (cpu.cpuLoad != null || ram.usedMemoryMb != null) {
-        const t = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-        performanceChart.data.labels.push(t);
-        performanceChart.data.datasets[0].data.push(latestCpu);
-        performanceChart.data.datasets[1].data.push(latestRam);
-        if (performanceChart.data.labels.length > 20) {
-            performanceChart.data.labels.shift();
-            performanceChart.data.datasets[0].data.shift();
-            performanceChart.data.datasets[1].data.shift();
-        }
-        performanceChart.update();
-    }
 };
 
-// ── 5.2 LOG SSE BAĞLANTISI ───────────────────────────────────────────────────
+// ── 5.4 ZAMAN SERİSİ GRAFİĞİNİN DÜZENLİ GÜNCELLENMESİ ────────────────────────
+// CPU ve RAM metrikleri artık farklı zamanlarda tetiklendiğinden,
+// zaman serisi grafiği zaman uyumsuzluğunu önlemek için her 2 saniyede bir güncellenir.
+setInterval(() => {
+    // Sadece hem CPU hem de RAM bağlantısı aktifken grafiğe veri ekle
+    const isConnected = connectionStates.cpu && connectionStates.ram;
+    if (!isConnected) {
+        return; // Bağlantı koptuysa grafik güncellemesini atla (grafik donar)
+    }
+
+    const t = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+    performanceChart.data.labels.push(t);
+    performanceChart.data.datasets[0].data.push(latestCpu);
+    performanceChart.data.datasets[1].data.push(latestRam);
+
+    if (performanceChart.data.labels.length > 20) {
+        performanceChart.data.labels.shift();
+        performanceChart.data.datasets[0].data.shift();
+        performanceChart.data.datasets[1].data.shift();
+    }
+    performanceChart.update();
+}, 2000);
+
+// ── 5.5 LOG SSE BAĞLANTISI ───────────────────────────────────────────────────
 const logEventSource = new EventSource('/stream/logs');
 
 logEventSource.onmessage = ({ data: raw }) => {
@@ -214,11 +274,10 @@ logEventSource.onmessage = ({ data: raw }) => {
 };
 
 logEventSource.onerror = () => {
-    console.warn("Log akışı bağlantısı kesildi, otomatik olarak yeniden bağlanmaya çalışılacak...");
+    console.warn("Log akışı bağlantısı kesildi, yeniden bağlanmaya çalışılacak...");
 };
 
-// ── 5.3 DATABASE SSE BAĞLANTISI ──────────────────────────────────────────────
-// Göreceli URL (relative path) kullanılarak olası port/CORS problemleri engellendi.
+// ── 5.6 DATABASE SSE BAĞLANTISI ──────────────────────────────────────────────
 const dbEventSource = new EventSource('/stream/databasemetrics');
 
 dbEventSource.onopen = () => {
